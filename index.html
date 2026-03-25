@@ -96,11 +96,11 @@ body {
 .tag-year { background: var(--accent-bg); color: var(--accent); }
 
 /* Question */
-.question-text { padding: 14px 20px; font-size: 15px; line-height: 1.65; word-break: keep-all; }
+.question-text { padding: 14px 20px; font-size: 16px; line-height: 1.65; word-break: keep-all; }
 
 /* Choices */
 .choices { padding: 0 20px 16px; }
-.choice { display: flex; align-items: flex-start; padding: 13px 14px; margin-bottom: 8px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 14px; line-height: 1.5; transition: all 0.15s; word-break: keep-all; }
+.choice { display: flex; align-items: flex-start; padding: 13px 14px; margin-bottom: 8px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 15px; line-height: 1.5; transition: all 0.15s; word-break: keep-all; }
 .choice:active { transform: scale(0.98); }
 .choice.selected { border-color: var(--primary); background: var(--primary-light); }
 .choice.correct { border-color: var(--correct); background: var(--correct-bg); }
@@ -222,7 +222,8 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
         <div class="stat-card"><div class="stat-number" id="stat-rate">0%</div><div class="stat-label">정답률</div></div>
         <div class="stat-card"><div class="stat-number" id="stat-wrong">0</div><div class="stat-label">오답 문제</div></div>
       </div>
-      <button class="action-btn btn-primary" onclick="startExam()">📝 실전 모의고사 (60문제/60분)</button>
+      <button class="action-btn btn-primary" onclick="startExam()" style="margin-bottom:0;border-radius:12px 12px 0 0;padding-bottom:8px">📝 실전 모의고사 (60문제/60분)</button>
+      <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.8);background:var(--primary);margin:0 20px 10px;padding:0 12px 10px;border-radius:0 0 12px 12px">※ 실제 시험과 동일하게 이전 문제로 돌아갈 수 없습니다</div>
       <button class="action-btn btn-secondary" onclick="showPracticeSetup()">📚 연습모드</button>
       <button class="action-btn btn-secondary" onclick="startWrongReview()">🔄 오답 복습</button>
       <div class="section-title">최근 학습</div>
