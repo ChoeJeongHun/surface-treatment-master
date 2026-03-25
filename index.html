@@ -967,9 +967,25 @@ function handleInstall() {
       document.getElementById('install-banner').style.display = 'none';
     });
   } else {
-    // iOS Safari: 안내 모달
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    if (isIOS) {
+    const isSafari = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|OPiOS/.test(navigator.userAgent);
+
+    if (isIOS && !isSafari) {
+      // 아이폰 크롬/다른 브라우저 → 사파리로 안내
+      showModal('Safari에서 열어주세요', '', [
+        { text: 'URL 복사하기', primary: true, action: () => { navigator.clipboard.writeText(window.location.href).then(() => toast('URL이 복사되었습니다. Safari에 붙여넣기 하세요!')); hideModal(); } },
+        { text: '닫기', action: hideModal }
+      ]);
+      document.getElementById('modal-msg').innerHTML =
+        '<div style="text-align:left;line-height:2;font-size:14px">' +
+        '아이폰은 <strong>Safari 브라우저</strong>에서만<br>홈 화면에 추가할 수 있어요.<br><br>' +
+        '<strong>1.</strong> 아래 <strong>"URL 복사하기"</strong> 버튼 누르기<br>' +
+        '<strong>2.</strong> <strong>Safari</strong> 앱 열기<br>' +
+        '<strong>3.</strong> 주소창에 <strong>붙여넣기</strong> 후 접속<br>' +
+        '<strong>4.</strong> 하단 <strong style="font-size:17px">□↑</strong> → <strong>"홈 화면에 추가"</strong>' +
+        '</div>';
+    } else if (isIOS && isSafari) {
+      // 아이폰 사파리
       showModal('홈 화면에 추가하는 방법', '', [
         { text: '확인했어요', primary: true, action: hideModal }
       ]);
@@ -980,6 +996,7 @@ function handleInstall() {
         '<strong>3.</strong> 오른쪽 위 <strong>"추가"</strong> 를 누르면 완료!' +
         '</div>';
     } else {
+      // 안드로이드 기타 브라우저
       showModal('홈 화면에 추가하는 방법', '', [
         { text: '확인했어요', primary: true, action: hideModal }
       ]);
