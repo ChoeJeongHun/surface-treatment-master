@@ -56,7 +56,7 @@ body {
 .screen.active { display: block; }
 
 /* User select screen */
-.user-select { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.user-select { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 20px 20px 40px; padding-top: max(20px, env(safe-area-inset-top, 20px)); }
 .user-select h2 { font-size: 22px; color: var(--primary); margin-bottom: 4px; }
 .user-select .subtitle { font-size: 13px; color: var(--text-light); margin-bottom: 6px; }
 .user-select .dday-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; background: var(--wrong); color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
@@ -178,6 +178,12 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
   <!-- User Select Screen -->
   <div class="screen active" id="screen-user-select">
     <div class="user-select">
+      <!-- 홈화면 추가 배너 -->
+      <div id="install-banner" style="display:none;width:100%;max-width:440px;padding:14px 18px;background:#fef8e8;border:1.5px solid #f0dca0;border-radius:14px;margin-bottom:32px;align-items:center;justify-content:space-between;gap:12px">
+        <span style="font-size:15px;color:#333">📲 홈 화면에 추가하면 앱처럼 사용할 수 있어요!</span>
+        <button onclick="handleInstall()" style="padding:10px 20px;border:none;border-radius:10px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">추가</button>
+      </div>
+
       <h2>표면처리기능장 CBT</h2>
       <p class="subtitle">모든 응시자의 합격을 기원합니다.</p>
       <div class="dday-badge" id="dday-badge"></div>
@@ -221,11 +227,6 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
 
     <!-- Home Tab -->
     <div class="screen active" id="tab-home">
-      <!-- 홈화면 추가 배너 -->
-      <div id="install-banner" style="display:none;margin:12px 20px 0;padding:10px 14px;background:var(--accent-bg);border:1px solid #f0d9a8;border-radius:10px;display:none;align-items:center;justify-content:space-between;font-size:13px;color:#8b6914">
-        <span>📲 홈 화면에 추가하면 앱처럼 사용할 수 있어요!</span>
-        <button onclick="handleInstall()" style="padding:6px 14px;border:none;border-radius:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;margin-left:8px">추가</button>
-      </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">전체 문제</div></div>
         <div class="stat-card"><div class="stat-number" id="stat-solved">0</div><div class="stat-label">풀은 문제</div></div>
@@ -969,19 +970,25 @@ function handleInstall() {
     // iOS Safari: 안내 모달
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     if (isIOS) {
-      showModal('홈 화면에 추가', '', [
-        { text: '확인', primary: true, action: hideModal }
+      showModal('홈 화면에 추가하는 방법', '', [
+        { text: '확인했어요', primary: true, action: hideModal }
       ]);
       document.getElementById('modal-msg').innerHTML =
-        '① 하단의 <strong>공유 버튼</strong> (□↑) 탭<br>' +
-        '② <strong>"홈 화면에 추가"</strong> 선택<br>' +
-        '③ <strong>"추가"</strong> 탭';
+        '<div style="text-align:left;line-height:2.2;font-size:15px">' +
+        '<strong>1.</strong> 화면 하단의 <strong style="font-size:18px">□↑</strong> (공유) 버튼을 누르세요<br>' +
+        '<strong>2.</strong> 목록에서 <strong>"홈 화면에 추가"</strong> 를 찾아 누르세요<br>' +
+        '<strong>3.</strong> 오른쪽 위 <strong>"추가"</strong> 를 누르면 완료!' +
+        '</div>';
     } else {
-      showModal('홈 화면에 추가', '', [
-        { text: '확인', primary: true, action: hideModal }
+      showModal('홈 화면에 추가하는 방법', '', [
+        { text: '확인했어요', primary: true, action: hideModal }
       ]);
       document.getElementById('modal-msg').innerHTML =
-        '브라우저 메뉴(⋮)에서<br><strong>"홈 화면에 추가"</strong> 또는<br><strong>"앱 설치"</strong>를 선택하세요';
+        '<div style="text-align:left;line-height:2.2;font-size:15px">' +
+        '<strong>1.</strong> 오른쪽 위 <strong style="font-size:18px">⋮</strong> (메뉴) 버튼을 누르세요<br>' +
+        '<strong>2.</strong> <strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong> 를 누르세요<br>' +
+        '<strong>3.</strong> <strong>"설치"</strong> 를 누르면 완료!' +
+        '</div>';
     }
   }
 }
