@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>표면처리 CBT</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="표면처리 CBT">
+<meta name="theme-color" content="#2d5a4e">
 <script src="questions.js"></script>
 <style>
 :root {
@@ -216,6 +221,11 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
 
     <!-- Home Tab -->
     <div class="screen active" id="tab-home">
+      <!-- 홈화면 추가 배너 -->
+      <div id="install-banner" style="display:none;margin:12px 20px 0;padding:10px 14px;background:var(--accent-bg);border:1px solid #f0d9a8;border-radius:10px;display:none;align-items:center;justify-content:space-between;font-size:13px;color:#8b6914">
+        <span>📲 홈 화면에 추가하면 앱처럼 사용할 수 있어요!</span>
+        <button onclick="handleInstall()" style="padding:6px 14px;border:none;border-radius:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;margin-left:8px">추가</button>
+      </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">전체 문제</div></div>
         <div class="stat-card"><div class="stat-number" id="stat-solved">0</div><div class="stat-label">풀은 문제</div></div>
@@ -926,6 +936,68 @@ function showModal(title, msg, buttons) {
 function hideModal() {
   document.getElementById('modal').classList.remove('show');
 }
+
+// ============================================================
+// Install (홈 화면에 추가)
+// ============================================================
+let deferredPrompt = null;
+
+// Android: beforeinstallprompt 이벤트 캡처
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  // 이미 standalone 모드(설치됨)면 숨기기
+  if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) return;
+  // 배너 닫은 적 있으면 숨기기
+  if (localStorage.getItem('cbt_install_dismissed')) return;
+  document.getElementById('install-banner').style.display = 'flex';
+}
+
+function handleInstall() {
+  if (deferredPrompt) {
+    // Android Chrome: 네이티브 설치 프롬프트
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(result => {
+      deferredPrompt = null;
+      document.getElementById('install-banner').style.display = 'none';
+    });
+  } else {
+    // iOS Safari: 안내 모달
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      showModal('홈 화면에 추가', '', [
+        { text: '확인', primary: true, action: hideModal }
+      ]);
+      document.getElementById('modal-msg').innerHTML =
+        '① 하단의 <strong>공유 버튼</strong> (□↑) 탭<br>' +
+        '② <strong>"홈 화면에 추가"</strong> 선택<br>' +
+        '③ <strong>"추가"</strong> 탭';
+    } else {
+      showModal('홈 화면에 추가', '', [
+        { text: '확인', primary: true, action: hideModal }
+      ]);
+      document.getElementById('modal-msg').innerHTML =
+        '브라우저 메뉴(⋮)에서<br><strong>"홈 화면에 추가"</strong> 또는<br><strong>"앱 설치"</strong>를 선택하세요';
+    }
+  }
+}
+
+// 페이지 로드 시 iOS면 바로 배너 표시
+window.addEventListener('load', () => {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (isStandalone) return;
+  if (localStorage.getItem('cbt_install_dismissed')) return;
+
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+  if (isIOS || isAndroid) {
+    document.getElementById('install-banner').style.display = 'flex';
+  }
+});
 
 // ============================================================
 // D-Day
