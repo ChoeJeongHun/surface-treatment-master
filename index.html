@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>표면처리기능장 합격 프로젝트</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.app-header {
+  background: linear-gradient(135deg, var(--primary), #7c3aed);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.app-header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.app-header .subtitle {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+/* Navigation */
+.nav-bar {
+  display: flex;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 8px;
+  border: none;
+  background: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.nav-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+/* Container */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* Dashboard Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill.green { background: var(--success); }
+.progress-fill.red { background: var(--danger); }
+.progress-fill.blue { background: var(--primary); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover { background: var(--primary-dark); }
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text);
+}
+
+.btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Quiz Mode */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.quiz-counter {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.quiz-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.badge-blue {
+  background: rgba(37,99,235,0.1);
+  color: var(--primary);
+}
+
+.badge-purple {
+  background: rgba(124,58,237,0.1);
+  color: #7c3aed;
+}
+
+.badge-green {
+  background: rgba(22,163,74,0.1);
+  color: var(--success);
+}
+
+.question-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.choice-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice-item {
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.choice-item:hover {
+  border-color: var(--primary);
+  background: rgba(37,99,235,0.03);
+}
+
+.choice-item.selected {
+  border-color: var(--primary);
+  background: rgba(37,99,235,0.08);
+}
+
+.choice-item.correct {
+  border-color: var(--success);
+  background: rgba(22,163,74,0.08);
+}
+
+.choice-item.wrong {
+  border-color: var(--danger);
+  background: rgba(220,38,38,0.08);
+}
+
+.choice-item.disabled {
+  pointer-events: none;
+}
+
+.choice-label {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.choice-item.selected .choice-label {
+  background: var(--primary);
+  color: white;
+}
+
+.choice-item.correct .choice-label {
+  background: var(--success);
+  color: white;
+}
+
+.choice-item.wrong .choice-label {
+  background: var(--danger);
+  color: white;
+}
+
+/* Filter Section */
+.filter-section {
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  margin-bottom: 12px;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--card);
+}
+
+.chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--card);
+  cursor: pointer;
+}
+
+input[type="number"] {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* Results */
+.result-card {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.result-score {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 16px 0;
+}
+
+.result-score.pass { color: var(--success); }
+.result-score.fail { color: var(--danger); }
+
+.result-detail {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.result-message {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.result-message.pass {
+  background: rgba(22,163,74,0.1);
+  color: var(--success);
+}
+
+.result-message.fail {
+  background: rgba(220,38,38,0.1);
+  color: var(--danger);
+}
+
+/* Review List */
+.review-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.review-item:last-child { border-bottom: none; }
+
+.review-item:hover { background: rgba(37,99,235,0.03); }
+
+.review-q-num {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.85rem;
+}
+
+.review-q-text {
+  font-size: 0.9rem;
+  margin-top: 4px;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.review-result {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.review-result.correct { color: var(--success); }
+.review-result.wrong { color: var(--danger); }
+
+/* Bookmarks */
+.bookmark-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.2s;
+}
+
+.bookmark-btn:active { transform: scale(1.2); }
+.bookmark-btn.active { color: var(--warning); }
+
+/* Year/Subject study list */
+.study-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.study-list-item:hover {
+  border-color: var(--primary);
+  background: rgba(37,99,235,0.03);
+}
+
+.study-list-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.study-list-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.study-list-sub {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.study-list-count {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary);
+  background: rgba(37,99,235,0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* Hidden sections */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeIn 0.3s ease; }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .container { padding: 12px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 12px; }
+  .stat-value { font-size: 1.4rem; }
+  .question-text { font-size: 0.95rem; }
+}
+
+/* Wrong answers review section */
+.wrong-section {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(220,38,38,0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--danger);
+}
+
+.wrong-section p {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* Timer */
+.timer {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+/* Streak indicator */
+.streak-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--warning);
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>표면처리기능장 합격 프로젝트</h1>
+  <div class="subtitle">2026년 목표 - 체계적 학습 시스템</div>
+</div>
+
+<nav class="nav-bar">
+  <button class="nav-btn active" onclick="showPage('dashboard')">대시보드</button>
+  <button class="nav-btn" onclick="showPage('study')">학습</button>
+  <button class="nav-btn" onclick="showPage('quiz')">퀴즈</button>
+  <button class="nav-btn" onclick="showPage('wrong')">오답노트</button>
+  <button class="nav-btn" onclick="showPage('bookmark')">북마크</button>
+</nav>
+
+<!-- Dashboard -->
+<div id="page-dashboard" class="page active">
+  <div class="container fade-in">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">전체 문제</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-solved">0</div>
+        <div class="stat-label">풀은 문제</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-correct-rate">0%</div>
+        <div class="stat-label">정답률</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-streak">0</div>
+        <div class="stat-label">연속 정답</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>학습 진행률</h2>
+      <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">
+        <span id="progress-label">0 / 858</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill blue" id="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>오늘의 학습</h2>
+      <div id="today-stats">
+        <p style="color: var(--text-light); font-size: 0.9rem;">오늘 풀은 문제: <strong id="today-count">0</strong>개</p>
+        <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 4px;">오늘 정답률: <strong id="today-rate">-</strong></p>
+      </div>
+      <div style="margin-top: 16px;">
+        <button class="btn btn-primary btn-block" onclick="startQuickQuiz()">빠른 퀴즈 (10문제)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>과목별 현황</h2>
+      <div id="subject-stats"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Study Page -->
+<div id="page-study" class="page">
+  <div class="container fade-in">
+
+    <div id="study-menu">
+      <div class="card">
+        <h2>시험 유형별 학습</h2>
+        <div id="type-list"></div>
+      </div>
+
+      <div class="card">
+        <h2>연도별 학습</h2>
+        <div id="year-list"></div>
+      </div>
+
+      <div class="card">
+        <h2>과목별 학습</h2>
+        <div id="subject-list"></div>
+      </div>
+    </div>
+
+    <div id="study-session" style="display: none;">
+      <div class="card">
+        <div class="quiz-header">
+          <button class="btn btn-outline" onclick="exitStudy()" style="padding: 8px 16px; font-size: 0.85rem;">← 목록</button>
+          <div class="quiz-counter" id="study-counter">1 / 60</div>
+          <button class="bookmark-btn" id="study-bookmark" onclick="toggleBookmark()">☆</button>
+        </div>
+
+        <div class="quiz-meta" id="study-meta"></div>
+        <div class="question-text" id="study-question"></div>
+        <ul class="choice-list" id="study-choices"></ul>
+
+        <div id="study-answer-section" style="display: none; margin-top: 16px;">
+          <div id="study-answer-text" style="padding: 12px; border-radius: 8px; font-size: 0.9rem;"></div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 20px;">
+          <button class="btn btn-outline" onclick="studyPrev()" style="flex:1; font-size: 0.9rem;" id="study-prev-btn">이전</button>
+          <button class="btn btn-primary" onclick="studyNext()" style="flex:1; font-size: 0.9rem;" id="study-next-btn">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz Page -->
+<div id="page-quiz" class="page">
+  <div class="container fade-in">
+
+    <div id="quiz-setup">
+      <div class="card">
+        <h2>퀴즈 설정</h2>
+
+        <div class="filter-group">
+          <label>시험 유형</label>
+          <div class="filter-chips">
+            <span class="chip active" data-filter="type" data-value="all">전체</span>
+            <span class="chip" data-filter="type" data-value="기능장">기능장</span>
+            <span class="chip" data-filter="type" data-value="산업기사">산업기사</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>출제 방식</label>
+          <div class="filter-chips">
+            <span class="chip active" data-filter="mode" data-value="random">랜덤</span>
+            <span class="chip" data-filter="mode" data-value="wrong">오답만</span>
+            <span class="chip" data-filter="mode" data-value="unsolved">안 풀은 문제</span>
+            <span class="chip" data-filter="mode" data-value="bookmark">북마크</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>문제 수</label>
+          <div class="filter-chips">
+            <span class="chip" data-filter="count" data-value="10">10문제</span>
+            <span class="chip active" data-filter="count" data-value="20">20문제</span>
+            <span class="chip" data-filter="count" data-value="40">40문제</span>
+            <span class="chip" data-filter="count" data-value="60">60문제</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" style="margin-top: 16px;" onclick="startQuiz()">퀴즈 시작</button>
+      </div>
+    </div>
+
+    <div id="quiz-active" style="display: none;">
+      <div class="card">
+        <div class="quiz-header">
+          <div class="quiz-counter" id="quiz-counter">1 / 20</div>
+          <div class="timer" id="quiz-timer">00:00</div>
+          <button class="bookmark-btn" id="quiz-bookmark" onclick="toggleBookmarkQuiz()">☆</button>
+        </div>
+
+        <div class="quiz-meta" id="quiz-meta"></div>
+        <div class="question-text" id="quiz-question"></div>
+        <ul class="choice-list" id="quiz-choices"></ul>
+
+        <div id="quiz-answer-section" style="display: none; margin-top: 16px;">
+          <div id="quiz-answer-text" style="padding: 12px; border-radius: 8px; font-size: 0.9rem;"></div>
+          <button class="btn btn-primary btn-block" style="margin-top: 12px;" onclick="quizNext()">다음 문제</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-result" style="display: none;">
+      <div class="card result-card">
+        <h2>퀴즈 결과</h2>
+        <div class="result-score" id="result-score">85%</div>
+        <div class="result-message" id="result-message">합격입니다!</div>
+        <div class="result-detail" id="result-detail">20문제 중 17문제 정답</div>
+        <div class="result-detail" id="result-time">소요 시간: 05:30</div>
+
+        <div class="btn-group" style="justify-content: center; margin-top: 16px;">
+          <button class="btn btn-primary" onclick="showPage('quiz'); resetQuiz();">다시 풀기</button>
+          <button class="btn btn-outline" onclick="reviewQuizResults()">오답 확인</button>
+        </div>
+      </div>
+
+      <div class="card" id="quiz-review-list" style="display: none;">
+        <h2>오답 목록</h2>
+        <div id="quiz-wrong-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wrong Answers Page -->
+<div id="page-wrong" class="page">
+  <div class="container fade-in">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2>오답노트</h2>
+        <span class="badge badge-blue" id="wrong-count">0개</span>
+      </div>
+      <div id="wrong-list">
+        <p style="color: var(--text-light); font-size: 0.9rem; text-align: center; padding: 20px;">
+          아직 틀린 문제가 없습니다.
+        </p>
+      </div>
+    </div>
+
+    <div id="wrong-detail" style="display: none;">
+      <div class="card">
+        <button class="btn btn-outline" onclick="closeWrongDetail()" style="padding: 8px 16px; font-size: 0.85rem; margin-bottom: 12px;">← 목록</button>
+        <div class="quiz-meta" id="wrong-meta"></div>
+        <div class="question-text" id="wrong-question"></div>
+        <ul class="choice-list" id="wrong-choices"></ul>
+        <div class="wrong-section" id="wrong-answer-info"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bookmark Page -->
+<div id="page-bookmark" class="page">
+  <div class="container fade-in">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2>북마크</h2>
+        <span class="badge badge-blue" id="bookmark-count">0개</span>
+      </div>
+      <div id="bookmark-list">
+        <p style="color: var(--text-light); font-size: 0.9rem; text-align: center; padding: 20px;">
+          북마크한 문제가 없습니다. 문제를 풀면서 ☆ 버튼을 눌러 북마크하세요.
+        </p>
+      </div>
+      <div style="margin-top: 12px;" id="bookmark-quiz-btn-wrap" style="display:none;">
+        <button class="btn btn-primary btn-block" onclick="startBookmarkQuiz()">북마크 문제 퀴즈</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="questions_data.js"></script>
+<script>
+// ===== State Management =====
+const STATE_KEY = 'surface_treatment_study_v1';
+
+let state = loadState();
+
+function defaultState() {
+  return {
+    solved: {},       // { questionId: { answer: idx, correct: bool, date: string } }
+    wrong: [],        // [questionId, ...]
+    bookmarks: [],    // [questionId, ...]
+    streak: 0,
+    maxStreak: 0,
+    todayDate: todayStr(),
+    todayCount: 0,
+    todayCorrect: 0,
+  };
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STATE_KEY);
+    if (saved) {
+      const s = JSON.parse(saved);
+      // Reset today stats if different day
+      if (s.todayDate !== todayStr()) {
+        s.todayDate = todayStr();
+        s.todayCount = 0;
+        s.todayCorrect = 0;
+      }
+      return s;
+    }
+  } catch(e) {}
+  return defaultState();
+}
+
+function saveState() {
+  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+}
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+// ===== Navigation =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn')[
+    ['dashboard','study','quiz','wrong','bookmark'].indexOf(name)
+  ].classList.add('active');
+
+  if (name === 'dashboard') updateDashboard();
+  if (name === 'study') renderStudyMenu();
+  if (name === 'wrong') renderWrongList();
+  if (name === 'bookmark') renderBookmarkList();
+  if (name === 'quiz') resetQuiz();
+}
+
+// ===== Dashboard =====
+function updateDashboard() {
+  const total = QUESTIONS.length;
+  const solvedCount = Object.keys(state.solved).length;
+  const correctCount = Object.values(state.solved).filter(s => s.correct).length;
+  const rate = solvedCount > 0 ? Math.round(correctCount / solvedCount * 100) : 0;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-solved').textContent = solvedCount;
+  document.getElementById('stat-correct-rate').textContent = rate + '%';
+  document.getElementById('stat-streak').textContent = state.streak;
+
+  document.getElementById('progress-label').textContent = `${solvedCount} / ${total}`;
+  const pct = Math.round(solvedCount / total * 100);
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  document.getElementById('today-count').textContent = state.todayCount;
+  document.getElementById('today-rate').textContent =
+    state.todayCount > 0 ? Math.round(state.todayCorrect / state.todayCount * 100) + '%' : '-';
+
+  // Subject stats
+  const subjects = {};
+  QUESTIONS.forEach(q => {
+    if (!subjects[q.subject]) subjects[q.subject] = { total: 0, solved: 0, correct: 0 };
+    subjects[q.subject].total++;
+    if (state.solved[q.id]) {
+      subjects[q.subject].solved++;
+      if (state.solved[q.id].correct) subjects[q.subject].correct++;
+    }
+  });
+
+  let subjectHtml = '';
+  Object.keys(subjects).sort().forEach(subj => {
+    const s = subjects[subj];
+    const rate = s.solved > 0 ? Math.round(s.correct / s.solved * 100) : 0;
+    const pct = Math.round(s.solved / s.total * 100);
+    subjectHtml += `
+      <div style="margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+          <span style="font-weight: 600;">${subj}</span>
+          <span style="color: var(--text-light);">${s.solved}/${s.total} (정답률 ${rate}%)</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill ${rate >= 60 ? 'green' : 'red'}" style="width: ${pct}%"></div>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('subject-stats').innerHTML = subjectHtml;
+}
+
+// ===== Study Page =====
+let currentStudyQuestions = [];
+let currentStudyIndex = 0;
+let studyAnswered = false;
+
+function renderStudyMenu() {
+  document.getElementById('study-menu').style.display = 'block';
+  document.getElementById('study-session').style.display = 'none';
+
+  // Type list
+  const types = ['기능장', '산업기사'];
+  let typeHtml = '';
+  types.forEach(t => {
+    const qs = QUESTIONS.filter(q => q.exam_type === t);
+    const solved = qs.filter(q => state.solved[q.id]).length;
+    typeHtml += `
+      <div class="study-list-item" onclick="startStudy('type', '${t}')">
+        <div class="study-list-left">
+          <span class="study-list-title">${t}</span>
+          <span class="study-list-sub">${solved}/${qs.length} 완료</span>
+        </div>
+        <span class="study-list-count">${qs.length}문제</span>
+      </div>
+    `;
+  });
+  document.getElementById('type-list').innerHTML = typeHtml;
+
+  // Year list
+  const years = [...new Set(QUESTIONS.map(q => q.year))].sort();
+  let yearHtml = '';
+  years.forEach(y => {
+    const qs = QUESTIONS.filter(q => q.year === y);
+    const solved = qs.filter(q => state.solved[q.id]).length;
+    yearHtml += `
+      <div class="study-list-item" onclick="startStudy('year', '${y}')">
+        <div class="study-list-left">
+          <span class="study-list-title">${y}년</span>
+          <span class="study-list-sub">${solved}/${qs.length} 완료</span>
+        </div>
+        <span class="study-list-count">${qs.length}문제</span>
+      </div>
+    `;
+  });
+  document.getElementById('year-list').innerHTML = yearHtml;
+
+  // Subject list
+  const subjects = [...new Set(QUESTIONS.map(q => q.subject))].sort();
+  let subjectHtml = '';
+  subjects.forEach(s => {
+    const qs = QUESTIONS.filter(q => q.subject === s);
+    const solved = qs.filter(q => state.solved[q.id]).length;
+    subjectHtml += `
+      <div class="study-list-item" onclick="startStudy('subject', '${s}')">
+        <div class="study-list-left">
+          <span class="study-list-title">${s}</span>
+          <span class="study-list-sub">${solved}/${qs.length} 완료</span>
+        </div>
+        <span class="study-list-count">${qs.length}문제</span>
+      </div>
+    `;
+  });
+  document.getElementById('subject-list').innerHTML = subjectHtml;
+}
+
+function startStudy(filterType, filterValue) {
+  if (filterType === 'type') {
+    currentStudyQuestions = QUESTIONS.filter(q => q.exam_type === filterValue);
+  } else if (filterType === 'year') {
+    currentStudyQuestions = QUESTIONS.filter(q => q.year === filterValue);
+  } else if (filterType === 'subject') {
+    currentStudyQuestions = QUESTIONS.filter(q => q.subject === filterValue);
+  }
+
+  currentStudyIndex = 0;
+  studyAnswered = false;
+
+  document.getElementById('study-menu').style.display = 'none';
+  document.getElementById('study-session').style.display = 'block';
+
+  renderStudyQuestion();
+}
+
+function renderStudyQuestion() {
+  if (currentStudyIndex >= currentStudyQuestions.length) {
+    exitStudy();
+    return;
+  }
+
+  const q = currentStudyQuestions[currentStudyIndex];
+  studyAnswered = false;
+
+  document.getElementById('study-counter').textContent =
+    `${currentStudyIndex + 1} / ${currentStudyQuestions.length}`;
+
+  document.getElementById('study-meta').innerHTML = `
+    <span class="badge badge-blue">${q.exam_type}</span>
+    <span class="badge badge-purple">${q.year}년</span>
+    <span class="badge badge-green">${q.subject}</span>
+  `;
+
+  document.getElementById('study-question').textContent = q.question;
+
+  const labels = ['가', '나', '다', '라'];
+  let choicesHtml = '';
+  q.choices.forEach((c, i) => {
+    const prev = state.solved[q.id];
+    let cls = '';
+    if (prev) {
+      cls = 'disabled';
+      if (prev.answer === i) cls += prev.correct ? ' correct' : ' wrong';
+    }
+    choicesHtml += `
+      <li class="choice-item ${cls}" onclick="selectStudyAnswer(${i})">
+        <span class="choice-label">${labels[i]}</span>
+        <span>${c}</span>
+      </li>
+    `;
+  });
+  document.getElementById('study-choices').innerHTML = choicesHtml;
+
+  // Bookmark state
+  const isBookmarked = state.bookmarks.includes(q.id);
+  document.getElementById('study-bookmark').textContent = isBookmarked ? '★' : '☆';
+  document.getElementById('study-bookmark').classList.toggle('active', isBookmarked);
+
+  document.getElementById('study-answer-section').style.display = 'none';
+
+  // Show previous answer if exists
+  if (state.solved[q.id]) {
+    studyAnswered = true;
+    showStudyAnswer(state.solved[q.id].answer, state.solved[q.id].correct);
+  }
+}
+
+function selectStudyAnswer(idx) {
+  if (studyAnswered) return;
+  studyAnswered = true;
+
+  const q = currentStudyQuestions[currentStudyIndex];
+  // For this app, we don't have answer keys, so we just record the selection
+  // Since we don't have correct answers, we'll let users self-grade
+  recordAnswer(q.id, idx, null);
+  showStudySelfGrade(idx);
+}
+
+function showStudySelfGrade(selectedIdx) {
+  const q = currentStudyQuestions[currentStudyIndex];
+  const labels = ['가', '나', '다', '라'];
+
+  document.getElementById('study-answer-section').style.display = 'block';
+  document.getElementById('study-answer-text').innerHTML = `
+    <p style="font-weight: 600; margin-bottom: 8px;">선택: ${labels[selectedIdx]}. ${q.choices[selectedIdx]}</p>
+    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">정답을 확인하고 아래 버튼을 눌러주세요:</p>
+    <div class="btn-group">
+      <button class="btn btn-success" onclick="gradeStudy(true, ${selectedIdx})" style="flex:1;">정답 ✓</button>
+      <button class="btn btn-danger" onclick="gradeStudy(false, ${selectedIdx})" style="flex:1;">오답 ✗</button>
+    </div>
+  `;
+
+  // Highlight selected
+  const items = document.querySelectorAll('#study-choices .choice-item');
+  items.forEach((item, i) => {
+    item.classList.add('disabled');
+    if (i === selectedIdx) item.classList.add('selected');
+  });
+}
+
+function gradeStudy(isCorrect, selectedIdx) {
+  const q = currentStudyQuestions[currentStudyIndex];
+
+  state.solved[q.id] = {
+    answer: selectedIdx,
+    correct: isCorrect,
+    date: todayStr()
+  };
+
+  if (isCorrect) {
+    state.streak++;
+    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+    state.todayCorrect++;
+    // Remove from wrong list if there
+    state.wrong = state.wrong.filter(id => id !== q.id);
+  } else {
+    state.streak = 0;
+    if (!state.wrong.includes(q.id)) state.wrong.push(q.id);
+  }
+
+  state.todayCount++;
+  saveState();
+
+  // Update UI
+  const items = document.querySelectorAll('#study-choices .choice-item');
+  items[selectedIdx].classList.remove('selected');
+  items[selectedIdx].classList.add(isCorrect ? 'correct' : 'wrong');
+
+  document.getElementById('study-answer-text').innerHTML = `
+    <p style="font-weight: 600; color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}">
+      ${isCorrect ? '정답입니다!' : '오답입니다.'}
+    </p>
+  `;
+}
+
+function studyPrev() {
+  if (currentStudyIndex > 0) {
+    currentStudyIndex--;
+    renderStudyQuestion();
+  }
+}
+
+function studyNext() {
+  currentStudyIndex++;
+  renderStudyQuestion();
+}
+
+function exitStudy() {
+  document.getElementById('study-menu').style.display = 'block';
+  document.getElementById('study-session').style.display = 'none';
+  renderStudyMenu();
+}
+
+function toggleBookmark() {
+  const q = currentStudyQuestions[currentStudyIndex];
+  toggleBookmarkById(q.id);
+  const isBookmarked = state.bookmarks.includes(q.id);
+  document.getElementById('study-bookmark').textContent = isBookmarked ? '★' : '☆';
+  document.getElementById('study-bookmark').classList.toggle('active', isBookmarked);
+}
+
+function toggleBookmarkById(id) {
+  const idx = state.bookmarks.indexOf(id);
+  if (idx >= 0) {
+    state.bookmarks.splice(idx, 1);
+  } else {
+    state.bookmarks.push(id);
+  }
+  saveState();
+}
+
+// ===== Quiz Mode =====
+let quizQuestions = [];
+let quizIndex = 0;
+let quizAnswers = [];
+let quizStartTime = null;
+let quizTimerInterval = null;
+
+let quizFilters = {
+  type: 'all',
+  mode: 'random',
+  count: 20
+};
+
+// Chip click handler
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('chip')) {
+    const filter = e.target.dataset.filter;
+    const value = e.target.dataset.value;
+
+    // Remove active from siblings
+    e.target.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+
+    if (filter === 'type') quizFilters.type = value;
+    if (filter === 'mode') quizFilters.mode = value;
+    if (filter === 'count') quizFilters.count = parseInt(value);
+  }
+});
+
+function startQuiz() {
+  let pool = [...QUESTIONS];
+
+  // Filter by type
+  if (quizFilters.type !== 'all') {
+    pool = pool.filter(q => q.exam_type === quizFilters.type);
+  }
+
+  // Filter by mode
+  if (quizFilters.mode === 'wrong') {
+    pool = pool.filter(q => state.wrong.includes(q.id));
+  } else if (quizFilters.mode === 'unsolved') {
+    pool = pool.filter(q => !state.solved[q.id]);
+  } else if (quizFilters.mode === 'bookmark') {
+    pool = pool.filter(q => state.bookmarks.includes(q.id));
+  }
+
+  if (pool.length === 0) {
+    alert('해당 조건의 문제가 없습니다.');
+    return;
+  }
+
+  // Shuffle and take count
+  shuffleArray(pool);
+  quizQuestions = pool.slice(0, quizFilters.count);
+  quizIndex = 0;
+  quizAnswers = new Array(quizQuestions.length).fill(null);
+
+  quizStartTime = Date.now();
+  startQuizTimer();
+
+  document.getElementById('quiz-setup').style.display = 'none';
+  document.getElementById('quiz-active').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+
+  renderQuizQuestion();
+}
+
+function startQuickQuiz() {
+  quizFilters = { type: 'all', mode: 'random', count: 10 };
+  showPage('quiz');
+  startQuiz();
+}
+
+function startBookmarkQuiz() {
+  quizFilters = { type: 'all', mode: 'bookmark', count: Math.min(20, state.bookmarks.length) };
+  showPage('quiz');
+  startQuiz();
+}
+
+function startQuizTimer() {
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
+  quizTimerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+    const min = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const sec = String(elapsed % 60).padStart(2, '0');
+    const timerEl = document.getElementById('quiz-timer');
+    if (timerEl) timerEl.textContent = `${min}:${sec}`;
+  }, 1000);
+}
+
+function renderQuizQuestion() {
+  const q = quizQuestions[quizIndex];
+
+  document.getElementById('quiz-counter').textContent =
+    `${quizIndex + 1} / ${quizQuestions.length}`;
+
+  document.getElementById('quiz-meta').innerHTML = `
+    <span class="badge badge-blue">${q.exam_type}</span>
+    <span class="badge badge-purple">${q.year}년</span>
+    <span class="badge badge-green">${q.subject}</span>
+  `;
+
+  document.getElementById('quiz-question').textContent = q.question;
+
+  const labels = ['가', '나', '다', '라'];
+  let choicesHtml = '';
+  q.choices.forEach((c, i) => {
+    choicesHtml += `
+      <li class="choice-item" onclick="selectQuizAnswer(${i})">
+        <span class="choice-label">${labels[i]}</span>
+        <span>${c}</span>
+      </li>
+    `;
+  });
+  document.getElementById('quiz-choices').innerHTML = choicesHtml;
+
+  // Bookmark state
+  const isBookmarked = state.bookmarks.includes(q.id);
+  document.getElementById('quiz-bookmark').textContent = isBookmarked ? '★' : '☆';
+  document.getElementById('quiz-bookmark').classList.toggle('active', isBookmarked);
+
+  document.getElementById('quiz-answer-section').style.display = 'none';
+}
+
+function selectQuizAnswer(idx) {
+  const q = quizQuestions[quizIndex];
+  quizAnswers[quizIndex] = idx;
+
+  // Show self-grade
+  const items = document.querySelectorAll('#quiz-choices .choice-item');
+  items.forEach((item, i) => {
+    item.classList.add('disabled');
+    if (i === idx) item.classList.add('selected');
+  });
+
+  const labels = ['가', '나', '다', '라'];
+  document.getElementById('quiz-answer-section').style.display = 'block';
+  document.getElementById('quiz-answer-text').innerHTML = `
+    <p style="font-weight: 600; margin-bottom: 8px;">선택: ${labels[idx]}. ${q.choices[idx]}</p>
+    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">정답을 확인하고 아래 버튼을 눌러주세요:</p>
+    <div class="btn-group">
+      <button class="btn btn-success" onclick="gradeQuiz(true)" style="flex:1;">정답 ✓</button>
+      <button class="btn btn-danger" onclick="gradeQuiz(false)" style="flex:1;">오답 ✗</button>
+    </div>
+  `;
+}
+
+function gradeQuiz(isCorrect) {
+  const q = quizQuestions[quizIndex];
+  const selectedIdx = quizAnswers[quizIndex];
+
+  state.solved[q.id] = {
+    answer: selectedIdx,
+    correct: isCorrect,
+    date: todayStr()
+  };
+
+  if (isCorrect) {
+    state.streak++;
+    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+    state.todayCorrect++;
+    state.wrong = state.wrong.filter(id => id !== q.id);
+  } else {
+    state.streak = 0;
+    if (!state.wrong.includes(q.id)) state.wrong.push(q.id);
+  }
+
+  state.todayCount++;
+  quizAnswers[quizIndex] = { idx: selectedIdx, correct: isCorrect };
+  saveState();
+
+  // Update UI
+  const items = document.querySelectorAll('#quiz-choices .choice-item');
+  items[selectedIdx].classList.remove('selected');
+  items[selectedIdx].classList.add(isCorrect ? 'correct' : 'wrong');
+
+  document.getElementById('quiz-answer-text').innerHTML = `
+    <p style="font-weight: 600; color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}; margin-bottom: 12px;">
+      ${isCorrect ? '정답입니다!' : '오답입니다.'}
+    </p>
+  `;
+
+  // Show next button or finish
+  const isLast = quizIndex >= quizQuestions.length - 1;
+  document.getElementById('quiz-answer-section').innerHTML += `
+    <button class="btn ${isLast ? 'btn-success' : 'btn-primary'} btn-block" onclick="${isLast ? 'finishQuiz()' : 'quizNext()'}">
+      ${isLast ? '결과 보기' : '다음 문제'}
+    </button>
+  `;
+}
+
+function quizNext() {
+  quizIndex++;
+  renderQuizQuestion();
+}
+
+function finishQuiz() {
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
+
+  const total = quizQuestions.length;
+  const correct = quizAnswers.filter(a => a && a.correct).length;
+  const pct = Math.round(correct / total * 100);
+  const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+  const min = String(Math.floor(elapsed / 60)).padStart(2, '0');
+  const sec = String(elapsed % 60).padStart(2, '0');
+
+  const pass = pct >= 60;
+
+  document.getElementById('quiz-active').style.display = 'none';
+  document.getElementById('quiz-result').style.display = 'block';
+
+  document.getElementById('result-score').textContent = pct + '%';
+  document.getElementById('result-score').className = `result-score ${pass ? 'pass' : 'fail'}`;
+  document.getElementById('result-message').textContent = pass ? '합격 기준 통과!' : '불합격 - 더 공부하세요!';
+  document.getElementById('result-message').className = `result-message ${pass ? 'pass' : 'fail'}`;
+  document.getElementById('result-detail').textContent = `${total}문제 중 ${correct}문제 정답`;
+  document.getElementById('result-time').textContent = `소요 시간: ${min}:${sec}`;
+}
+
+function reviewQuizResults() {
+  document.getElementById('quiz-review-list').style.display = 'block';
+
+  const labels = ['가', '나', '다', '라'];
+  let html = '';
+  quizQuestions.forEach((q, i) => {
+    const answer = quizAnswers[i];
+    if (!answer || answer.correct) return;
+
+    html += `
+      <div class="review-item">
+        <div class="review-q-num">Q${i + 1} [${q.exam_type} ${q.year}]</div>
+        <div class="review-q-text">${q.question}</div>
+        <div class="review-result wrong">✗ 선택: ${labels[answer.idx]}. ${q.choices[answer.idx]}</div>
+      </div>
+    `;
+  });
+
+  if (!html) {
+    html = '<p style="color: var(--success); text-align: center; padding: 20px;">모든 문제를 맞추셨습니다!</p>';
+  }
+
+  document.getElementById('quiz-wrong-list').innerHTML = html;
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-setup').style.display = 'block';
+  document.getElementById('quiz-active').style.display = 'none';
+  document.getElementById('quiz-result').style.display = 'none';
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
+}
+
+function toggleBookmarkQuiz() {
+  const q = quizQuestions[quizIndex];
+  toggleBookmarkById(q.id);
+  const isBookmarked = state.bookmarks.includes(q.id);
+  document.getElementById('quiz-bookmark').textContent = isBookmarked ? '★' : '☆';
+  document.getElementById('quiz-bookmark').classList.toggle('active', isBookmarked);
+}
+
+// ===== Wrong Answers Page =====
+function renderWrongList() {
+  const wrongQs = QUESTIONS.filter(q => state.wrong.includes(q.id));
+  document.getElementById('wrong-count').textContent = wrongQs.length + '개';
+
+  if (wrongQs.length === 0) {
+    document.getElementById('wrong-list').innerHTML =
+      '<p style="color: var(--text-light); font-size: 0.9rem; text-align: center; padding: 20px;">아직 틀린 문제가 없습니다.</p>';
+    return;
+  }
+
+  const labels = ['가', '나', '다', '라'];
+  let html = '';
+  wrongQs.forEach(q => {
+    const s = state.solved[q.id];
+    html += `
+      <div class="review-item" onclick="showWrongDetail('${q.id}')">
+        <div class="review-q-num">${q.exam_type} ${q.year}년 Q${q.number}</div>
+        <div class="review-q-text">${q.question}</div>
+        <div class="review-result wrong">✗ 선택: ${labels[s.answer]}</div>
+      </div>
+    `;
+  });
+  document.getElementById('wrong-list').innerHTML = html;
+  document.getElementById('wrong-detail').style.display = 'none';
+}
+
+function showWrongDetail(qId) {
+  const q = QUESTIONS.find(q => q.id === qId);
+  const s = state.solved[qId];
+  if (!q || !s) return;
+
+  document.getElementById('wrong-list').parentElement.style.display = 'none';
+  document.getElementById('wrong-detail').style.display = 'block';
+
+  document.getElementById('wrong-meta').innerHTML = `
+    <span class="badge badge-blue">${q.exam_type}</span>
+    <span class="badge badge-purple">${q.year}년</span>
+    <span class="badge badge-green">${q.subject}</span>
+  `;
+
+  document.getElementById('wrong-question').textContent = q.question;
+
+  const labels = ['가', '나', '다', '라'];
+  let choicesHtml = '';
+  q.choices.forEach((c, i) => {
+    let cls = 'disabled';
+    if (i === s.answer) cls += ' wrong';
+    choicesHtml += `
+      <li class="choice-item ${cls}">
+        <span class="choice-label">${labels[i]}</span>
+        <span>${c}</span>
+      </li>
+    `;
+  });
+  document.getElementById('wrong-choices').innerHTML = choicesHtml;
+
+  document.getElementById('wrong-answer-info').innerHTML = `
+    <p style="font-weight: 600; color: var(--danger);">오답: ${labels[s.answer]}. ${q.choices[s.answer]}</p>
+    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">날짜: ${s.date}</p>
+  `;
+}
+
+function closeWrongDetail() {
+  document.getElementById('wrong-detail').style.display = 'none';
+  document.getElementById('wrong-list').parentElement.style.display = 'block';
+}
+
+// ===== Bookmarks =====
+function renderBookmarkList() {
+  const bookmarkedQs = QUESTIONS.filter(q => state.bookmarks.includes(q.id));
+  document.getElementById('bookmark-count').textContent = bookmarkedQs.length + '개';
+
+  if (bookmarkedQs.length === 0) {
+    document.getElementById('bookmark-list').innerHTML =
+      '<p style="color: var(--text-light); font-size: 0.9rem; text-align: center; padding: 20px;">북마크한 문제가 없습니다. 문제를 풀면서 ☆ 버튼을 눌러 북마크하세요.</p>';
+    document.getElementById('bookmark-quiz-btn-wrap').style.display = 'none';
+    return;
+  }
+
+  let html = '';
+  bookmarkedQs.forEach(q => {
+    const s = state.solved[q.id];
+    let resultHtml = '';
+    if (s) {
+      resultHtml = `<div class="review-result ${s.correct ? 'correct' : 'wrong'}">${s.correct ? '✓ 정답' : '✗ 오답'}</div>`;
+    }
+    html += `
+      <div class="review-item" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="flex: 1;">
+          <div class="review-q-num">${q.exam_type} ${q.year}년 Q${q.number}</div>
+          <div class="review-q-text">${q.question}</div>
+          ${resultHtml}
+        </div>
+        <button class="bookmark-btn active" onclick="event.stopPropagation(); removeBookmark('${q.id}')" style="color: var(--warning);">★</button>
+      </div>
+    `;
+  });
+  document.getElementById('bookmark-list').innerHTML = html;
+  document.getElementById('bookmark-quiz-btn-wrap').style.display = 'block';
+}
+
+function removeBookmark(id) {
+  toggleBookmarkById(id);
+  renderBookmarkList();
+}
+
+// ===== Utilities =====
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function recordAnswer(qId, answerIdx, correct) {
+  // Just record the selection, grading happens separately
+}
+
+// ===== Init =====
+updateDashboard();
+</script>
+</body>
+</html>
