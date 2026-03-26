@@ -155,6 +155,18 @@ body {
 /* Export/Import */
 .data-tools { padding: 20px; display: flex; gap: 10px; }
 
+/* Chapter cards */
+.chapter-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+.chapter-card:hover, .chapter-card:active { border-color: var(--primary); background: var(--primary-light); }
+.chapter-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.chapter-card-title { font-size: 15px; font-weight: 600; }
+.chapter-card-count { font-size: 12px; color: var(--text-light); }
+.chapter-card-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.chapter-card-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.chapter-card-bottom { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); }
+.chapter-card-rate { font-weight: 600; }
+.chapter-weak { display: inline-block; padding: 3px 10px; border-radius: 20px; background: var(--accent-bg); color: var(--accent); font-size: 11px; font-weight: 600; margin-left: 6px; }
+
 /* Toast */
 .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 .toast.show { opacity: 1; }
@@ -237,6 +249,9 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
       <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.8);background:var(--primary);margin:0 20px 10px;padding:0 12px 10px;border-radius:0 0 12px 12px">※ 실제 시험과 동일하게 이전 문제로 돌아갈 수 없습니다</div>
       <button class="action-btn btn-secondary" onclick="showPracticeSetup()">📚 연습모드</button>
       <button class="action-btn btn-secondary" onclick="startWrongReview()">🔄 오답 복습</button>
+
+      <div class="section-title">강별 문제풀이</div>
+      <div id="chapter-cards" style="padding:0 20px 10px"></div>
       <div class="section-title">최근 학습</div>
       <div class="history-list" id="history-list"></div>
     </div>
@@ -254,14 +269,16 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
           </div>
         </div>
         <div class="option-group">
-          <label>시험 유형</label>
-          <div class="option-pills" id="type-pills">
-            <div class="pill active" data-type="all">전체</div>
-            <div class="pill" data-type="기능장">기능장</div>
-            <div class="pill" data-type="산업기사">산업기사</div>
+          <label>출제 범위</label>
+          <div class="option-pills" id="chapter-pills">
+            <div class="pill active" data-chapter="all">전체</div>
+            <div class="pill" data-chapter="기출">기출문제</div>
+            <div class="pill" data-chapter="1장">1장</div>
+            <div class="pill" data-chapter="2장">2장</div>
           </div>
+          <div id="chapter-desc" style="font-size:11px;color:var(--text-light);margin-top:6px"></div>
         </div>
-        <div class="option-group">
+        <div class="option-group" id="year-group">
           <label>연도</label>
           <select class="filter-select" id="year-filter">
             <option value="all">전체 연도</option>
@@ -283,6 +300,7 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
       <div class="choices" id="quiz-choices"></div>
       <div class="quiz-footer">
         <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>다음 문제 →</button>
+        <button onclick="quitQuiz()" style="width:100%;padding:10px;border:none;background:none;color:var(--text-light);font-size:13px;cursor:pointer;margin-top:6px">🏠 홈으로</button>
       </div>
     </div>
 
@@ -415,6 +433,9 @@ function updateHome() {
   document.getElementById('stat-rate').textContent = totalAttempts > 0 ? Math.round(correctCount / totalAttempts * 100) + '%' : '0%';
   document.getElementById('stat-wrong').textContent = Object.keys(wrong).length.toLocaleString();
 
+  // Chapter cards
+  renderChapterCards();
+
   // History
   const histEl = document.getElementById('history-list');
   const recent = history.slice(-5).reverse();
@@ -455,6 +476,101 @@ function showTab(name) {
 }
 
 // ============================================================
+// Chapter Cards (강별 문제풀이)
+// ============================================================
+const CHAPTER_INFO = {
+  '기출': { name: '기출문제', desc: '기능장/산업기사 기출문제', icon: '📝' },
+  '1장': { name: '1장 표면처리의 기초', desc: '도금 기초지식·탈지·연마·전처리', icon: '🔧' },
+  '2장': { name: '2장 전기화학', desc: '전기화학 기초·전기분해·전극반응', icon: '⚡' }
+};
+
+function getChapterStats() {
+  const history = load('history', []);
+  const chapterHistory = {};
+
+  // history에서 강별 통계 집계
+  history.forEach(h => {
+    if (h.chapter) {
+      if (!chapterHistory[h.chapter]) chapterHistory[h.chapter] = { score: 0, total: 0 };
+      chapterHistory[h.chapter].score += h.score;
+      chapterHistory[h.chapter].total += h.total;
+    }
+  });
+
+  // 강별 문제 수 + 풀이 현황
+  const solved = new Set(load('solved', []));
+  const chapters = {};
+
+  QUESTIONS.forEach(q => {
+    const ch = q.chapter || '기출';
+    if (!chapters[ch]) chapters[ch] = { total: 0, solved: 0 };
+    chapters[ch].total++;
+    if (solved.has(q.id)) chapters[ch].solved++;
+  });
+
+  return { chapters, chapterHistory };
+}
+
+function renderChapterCards() {
+  const { chapters, chapterHistory } = getChapterStats();
+  const el = document.getElementById('chapter-cards');
+
+  // 취약 강 찾기: 정답률이 가장 낮은 교재 강
+  let weakest = null;
+  let weakestRate = 100;
+  Object.entries(chapterHistory).forEach(([ch, stat]) => {
+    if (ch !== '기출' && stat.total >= 5) {
+      const rate = Math.round(stat.score / stat.total * 100);
+      if (rate < weakestRate) { weakestRate = rate; weakest = ch; }
+    }
+  });
+
+  const order = ['기출', '1장', '2장'];
+  el.innerHTML = order.map(ch => {
+    const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: '📖' };
+    const stat = chapters[ch] || { total: 0, solved: 0 };
+    const hist = chapterHistory[ch] || { score: 0, total: 0 };
+    const progress = stat.total > 0 ? Math.round(stat.solved / stat.total * 100) : 0;
+    const rate = hist.total > 0 ? Math.round(hist.score / hist.total * 100) : -1;
+    const rateColor = rate >= 60 ? 'var(--correct)' : rate >= 0 ? 'var(--wrong)' : 'var(--text-light)';
+    const isWeak = ch === weakest;
+    const barColor = rate >= 60 ? 'var(--correct)' : rate >= 0 ? 'var(--accent)' : 'var(--primary)';
+
+    return `<div class="chapter-card" onclick="startChapterQuiz('${ch}')">
+      <div class="chapter-card-top">
+        <span class="chapter-card-title">${info.icon} ${info.name}${isWeak ? '<span class="chapter-weak">취약</span>' : ''}</span>
+        <span class="chapter-card-count">${stat.total}문제</span>
+      </div>
+      <div class="chapter-card-bar"><div class="chapter-card-fill" style="width:${progress}%;background:${barColor}"></div></div>
+      <div class="chapter-card-bottom">
+        <span>진행률 ${progress}% (${stat.solved}/${stat.total})</span>
+        <span class="chapter-card-rate" style="color:${rateColor}">${rate >= 0 ? '정답률 ' + rate + '%' : '미학습'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 취약 강 제안
+  if (weakest && weakestRate < 60) {
+    el.innerHTML += `<div style="padding:10px 14px;background:var(--accent-bg);border-radius:10px;font-size:13px;color:var(--accent);margin-top:4px">
+      💡 <strong>${CHAPTER_INFO[weakest]?.name || weakest}</strong>의 정답률이 ${weakestRate}%로 가장 낮습니다. 집중 학습을 추천합니다!
+    </div>`;
+  }
+}
+
+function startChapterQuiz(chapter) {
+  const pool = QUESTIONS.filter(q => (q.chapter || '기출') === chapter);
+  if (pool.length === 0) { toast('해당 강의 문제가 없습니다'); return; }
+
+  const unsolved = getUnsolvedQuestions(pool);
+  const shuffled = shuffleArray(unsolved);
+  const selected = shuffled.slice(0, Math.min(20, shuffled.length));
+
+  // 강별 모드로 시작
+  quiz.chapterMode = chapter;
+  startQuiz(selected, 'chapter', 0);
+}
+
+// ============================================================
 // Practice Setup
 // ============================================================
 function showPracticeSetup() {
@@ -467,10 +583,16 @@ function showPracticeSetup() {
       p.classList.add('active');
     };
   });
-  document.querySelectorAll('#type-pills .pill').forEach(p => {
+  document.querySelectorAll('#chapter-pills .pill').forEach(p => {
     p.onclick = () => {
-      document.querySelectorAll('#type-pills .pill').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('#chapter-pills .pill').forEach(x => x.classList.remove('active'));
       p.classList.add('active');
+      const ch = p.dataset.chapter;
+      const desc = document.getElementById('chapter-desc');
+      const yearGroup = document.getElementById('year-group');
+      if (ch === 'all') { desc.textContent = ''; yearGroup.style.display = ''; }
+      else if (ch === '기출') { desc.textContent = '기능장/산업기사 기출문제'; yearGroup.style.display = ''; }
+      else { desc.textContent = CHAPTER_INFO[ch]?.desc || ''; yearGroup.style.display = 'none'; }
     };
   });
 }
@@ -517,11 +639,11 @@ function startExam() {
 
 function startPractice() {
   const count = parseInt(document.querySelector('#count-pills .pill.active').dataset.count);
-  const type = document.querySelector('#type-pills .pill.active').dataset.type;
+  const chapter = document.querySelector('#chapter-pills .pill.active').dataset.chapter;
   const year = document.getElementById('year-filter').value;
 
   let pool = [...QUESTIONS];
-  if (type !== 'all') pool = pool.filter(q => q.exam_type === type);
+  if (chapter !== 'all') pool = pool.filter(q => (q.chapter || '기출') === chapter);
   if (year !== 'all') pool = pool.filter(q => q.year === year);
 
   if (pool.length === 0) { toast('해당 조건의 문제가 없습니다'); return; }
@@ -530,6 +652,7 @@ function startPractice() {
   const shuffled = shuffleArray(unsolved);
   const selected = shuffled.slice(0, Math.min(count, shuffled.length));
 
+  quiz.chapterMode = chapter;
   startQuiz(selected, 'practice', 0);
 }
 
@@ -623,10 +746,10 @@ function renderQuestion() {
   document.getElementById('quiz-progress').textContent = `${quiz.current + 1} / ${quiz.questions.length}`;
 
   // Tags
-  document.getElementById('quiz-tags').innerHTML = `
-    <span class="tag tag-type">${q.exam_type}</span>
-    <span class="tag tag-year">${q.year}년</span>
-  `;
+  const chapterTag = q.chapter && q.chapter !== '기출' ? `<span class="tag tag-type">${q.chapter}</span>` : '';
+  const typeTag = q.exam_type !== '교재' ? `<span class="tag tag-type">${q.exam_type}</span>` : '';
+  const yearTag = q.year !== '교재' ? `<span class="tag tag-year">${q.year}년</span>` : '';
+  document.getElementById('quiz-tags').innerHTML = `${chapterTag}${typeTag}${yearTag}`;
 
   // Question
   document.getElementById('quiz-question').textContent = q.question;
@@ -662,7 +785,7 @@ function selectChoice(index) {
   quiz.answers[quiz.current] = index;
   document.getElementById('next-btn').disabled = false;
 
-  if (quiz.mode === 'practice' || quiz.mode === 'wrong_review') {
+  if (quiz.mode === 'practice' || quiz.mode === 'wrong_review' || quiz.mode === 'chapter') {
     showAnswerResult(index);
   } else {
     // Exam mode: just highlight selection
@@ -694,6 +817,14 @@ function showAnswerResult(selected) {
       textSpan.innerHTML += ' <strong style="color:var(--wrong);margin-left:6px">✗ 오답</strong>';
     }
   });
+
+  // 해설 표시
+  if (q.explanation) {
+    const expEl = document.createElement('div');
+    expEl.style.cssText = 'padding:12px 16px;margin:0 0 8px;background:var(--primary-light);border-radius:10px;font-size:13px;line-height:1.6;color:var(--text)';
+    expEl.innerHTML = `<strong style="color:var(--primary)">💡 해설</strong><br>${q.explanation}`;
+    document.getElementById('quiz-choices').appendChild(expEl);
+  }
 }
 
 function nextQuestion() {
@@ -704,6 +835,13 @@ function nextQuestion() {
   quiz.current++;
   renderQuestion();
   saveQuizState();
+}
+
+function quitQuiz() {
+  showModal('홈으로 돌아가기', '진행 중인 문제풀이를 종료하시겠습니까?', [
+    { text: '종료', primary: true, action: () => { if (quiz.timer) clearInterval(quiz.timer); save('quiz_state', null); hideModal(); showTab('home'); updateHome(); } },
+    { text: '계속 풀기', action: () => hideModal() }
+  ]);
 }
 
 function finishQuiz() {
@@ -743,7 +881,8 @@ function finishQuiz() {
     mode: quiz.mode,
     score: score,
     total: quiz.questions.length,
-    time: elapsed
+    time: elapsed,
+    chapter: quiz.chapterMode || 'all'
   });
   save('history', history);
 
@@ -759,7 +898,7 @@ function showResult(score, total, elapsed, wrongCount) {
 
   const container = document.getElementById('result-container');
   container.innerHTML = `
-    <div class="result-label">${quiz.mode === 'exam' ? '모의고사' : quiz.mode === 'practice' ? '연습' : '오답복습'} 결과</div>
+    <div class="result-label">${quiz.mode === 'exam' ? '모의고사' : quiz.mode === 'chapter' ? (CHAPTER_INFO[quiz.chapterMode]?.name || quiz.chapterMode) : quiz.mode === 'practice' ? '연습' : '오답복습'} 결과</div>
     <div class="result-score">${pct}%</div>
     <div class="result-pass ${pass ? 'pass' : 'fail'}">${pass ? '합격 (60점 이상)' : '불합격 (60점 미만)'}</div>
     <div class="result-details">
