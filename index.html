@@ -276,6 +276,10 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
             <div class="pill" data-chapter="1장">1장</div>
             <div class="pill" data-chapter="2장">2장</div>
             <div class="pill" data-chapter="3장">3장</div>
+            <div class="pill" data-chapter="4장">4장</div>
+            <div class="pill" data-chapter="5장">5장</div>
+            <div class="pill" data-chapter="6장">6장</div>
+            <div class="pill" data-chapter="7장">7장</div>
           </div>
           <div id="chapter-desc" style="font-size:11px;color:var(--text-light);margin-top:6px"></div>
         </div>
@@ -483,7 +487,11 @@ const CHAPTER_INFO = {
   '기출': { name: '기출문제', desc: '기능장/산업기사 기출문제', icon: '📝' },
   '1장': { name: '1장 표면처리의 기초', desc: '도금 기초지식·탈지·연마·전처리', icon: '🔧' },
   '2장': { name: '2장 전기화학', desc: '전기화학 기초·전기분해·전극반응', icon: '⚡' },
-  '3장': { name: '3장 전기도금', desc: '구리·니켈·크롬·아연·귀금속 도금', icon: '🔩' }
+  '3장': { name: '3장 전기도금', desc: '구리·니켈·크롬·아연·귀금속 도금', icon: '🔩' },
+  '4장': { name: '4장 특수도금', desc: '화성처리·무전해도금·용융도금·건식도금', icon: '🧪' },
+  '5장': { name: '5장 표면검사·도금액 관리', desc: '품질검사·도금액 분석·밀착성', icon: '🔬' },
+  '6장': { name: '6장 안전관리', desc: '산업안전·약품취급·자동생산시스템', icon: '⚠️' },
+  '7장': { name: '7장 금속재료', desc: '금속조직·열처리·합금·비철금속', icon: '🔗' }
 };
 
 function getChapterStats() {
@@ -527,7 +535,7 @@ function renderChapterCards() {
     }
   });
 
-  const order = ['기출', '1장', '2장', '3장'];
+  const order = ['기출', '1장', '2장', '3장', '4장', '5장', '6장', '7장'];
   el.innerHTML = order.map(ch => {
     const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: '📖' };
     const stat = chapters[ch] || { total: 0, solved: 0 };
