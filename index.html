@@ -535,7 +535,7 @@ function renderChapterCards() {
     }
   });
 
-  const order = ['기출', '1장', '2장', '3장', '4장', '5장', '6장', '7장'];
+  const order = ['1장', '2장', '3장', '4장', '5장', '6장', '7장', '기출'];
   el.innerHTML = order.map(ch => {
     const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: '📖' };
     const stat = chapters[ch] || { total: 0, solved: 0 };
