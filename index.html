@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html class="light" lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -8,17 +8,106 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="표면처리 CBT">
-<meta name="theme-color" content="#2d5a4e">
+<meta name="theme-color" content="#134237">
 <script src="questions.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#134237",
+        "primary-container": "#2d5a4e",
+        "primary-fixed": "#bceddd",
+        "primary-fixed-dim": "#a1d0c1",
+        "on-primary": "#ffffff",
+        "on-primary-container": "#a0cfc0",
+        "on-primary-fixed": "#002019",
+        "on-primary-fixed-variant": "#214e43",
+        "secondary": "#51625c",
+        "secondary-container": "#d1e4dc",
+        "secondary-fixed": "#d4e7df",
+        "on-secondary": "#ffffff",
+        "on-secondary-container": "#556660",
+        "on-secondary-fixed": "#0e1f1a",
+        "on-secondary-fixed-variant": "#394a45",
+        "tertiary": "#593028",
+        "tertiary-container": "#74463d",
+        "tertiary-fixed": "#ffdad3",
+        "on-tertiary": "#ffffff",
+        "on-tertiary-container": "#f5b7ab",
+        "error": "#ba1a1a",
+        "error-container": "#ffdad6",
+        "on-error": "#ffffff",
+        "on-error-container": "#93000a",
+        "background": "#fafaf5",
+        "surface": "#fafaf5",
+        "surface-bright": "#fafaf5",
+        "surface-container": "#eeeee9",
+        "surface-container-high": "#e8e8e3",
+        "surface-container-highest": "#e3e3de",
+        "surface-container-low": "#f4f4ef",
+        "surface-container-lowest": "#ffffff",
+        "surface-dim": "#dadad5",
+        "surface-variant": "#e3e3de",
+        "surface-tint": "#3a675a",
+        "on-surface": "#1a1c19",
+        "on-surface-variant": "#404845",
+        "on-background": "#1a1c19",
+        "outline": "#717975",
+        "outline-variant": "#c0c8c4",
+        "inverse-surface": "#2f312e",
+        "inverse-on-surface": "#f1f1ec",
+        "inverse-primary": "#a1d0c1",
+        "correct": "#27ae60",
+        "correct-bg": "#eafaf1",
+        "wrong": "#e74c3c",
+        "wrong-bg": "#fef5f5",
+        "accent": "#e67e22",
+        "accent-bg": "#fef3e2"
+      },
+      fontFamily: {
+        "headline": ["Manrope", "Noto Sans KR", "sans-serif"],
+        "body": ["Inter", "Noto Sans KR", "sans-serif"],
+        "label": ["Inter", "Noto Sans KR", "sans-serif"]
+      },
+      borderRadius: {"DEFAULT": "0.25rem", "lg": "16px", "xl": "24px", "full": "9999px"},
+    },
+  },
+}
+</script>
 <style>
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+.glass-effect {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.circular-progress {
+  background: conic-gradient(from 0deg, #134237 0%, #e8e8e3 0%);
+}
+.screen { display: none; }
+.screen.active { display: block; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+/* CSS variables for JS inline styles */
 :root {
-  --primary: #2d5a4e;
-  --primary-light: #e8f4f0;
-  --bg: #f5f5f0;
+  --primary: #134237;
+  --primary-light: #bceddd;
+  --bg: #fafaf5;
   --card: #ffffff;
-  --border: #e5e5e0;
-  --text: #333333;
-  --text-light: #888888;
+  --border: #c0c8c4;
+  --text: #1a1c19;
+  --text-light: #717975;
   --correct: #27ae60;
   --correct-bg: #eafaf1;
   --wrong: #e74c3c;
@@ -26,336 +115,346 @@
   --accent: #e67e22;
   --accent-bg: #fef3e2;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-text-size-adjust: 100%;
-}
-
-.app { max-width: 520px; margin: 0 auto; background: var(--card); min-height: 100vh; position: relative; padding-bottom: 60px; }
-
-/* Header */
-.header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10; }
-.header h1 { font-size: 17px; font-weight: 700; color: var(--primary); }
-.header-sub { font-size: 11px; color: var(--text-light); font-weight: 400; }
-.header-dday { font-size: 11px; color: var(--wrong); font-weight: 700; }
-.header .user-name { font-size: 13px; color: var(--text-light); cursor: pointer; }
-
-/* Bottom tabs */
-.tabs { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 520px; display: flex; background: var(--card); border-top: 1px solid var(--border); z-index: 10; }
-.tab { flex: 1; text-align: center; padding: 10px 0 8px; font-size: 11px; color: var(--text-light); cursor: pointer; border-top: 2px solid transparent; }
-.tab.active { color: var(--primary); border-top-color: var(--primary); font-weight: 600; }
-.tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
-
-/* Screen visibility */
-.screen { display: none; }
-.screen.active { display: block; }
-
-/* User select screen */
-.user-select { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 20px 20px 40px; padding-top: max(20px, env(safe-area-inset-top, 20px)); }
-.user-select h2 { font-size: 22px; color: var(--primary); margin-bottom: 4px; }
-.user-select .subtitle { font-size: 13px; color: var(--text-light); margin-bottom: 6px; }
-.user-select .dday-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; background: var(--wrong); color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
-
-/* Exam schedule table */
-.schedule-table { width: 100%; max-width: 440px; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; }
-.schedule-table th { background: var(--primary); color: #fff; padding: 8px 4px; font-weight: 600; text-align: center; }
-.schedule-table td { padding: 7px 4px; text-align: center; border: 1px solid var(--border); background: var(--card); line-height: 1.4; }
-.schedule-table .schedule-title { background: var(--primary-light); font-weight: 600; color: var(--primary); }
-.select-label { font-size: 14px; color: var(--text-light); margin-bottom: 12px; }
-.user-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; }
-.user-btn { padding: 14px 8px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--card); font-size: 14px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.15s; }
-.user-btn:hover, .user-btn:active { border-color: var(--primary); background: var(--primary-light); }
-
-/* Stats cards */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 20px; }
-.stat-card { background: var(--bg); border-radius: 12px; padding: 14px; text-align: center; }
-.stat-number { font-size: 26px; font-weight: 700; color: var(--primary); }
-.stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-
-/* Buttons */
-.action-btn { display: block; width: calc(100% - 40px); margin: 0 auto 10px; padding: 15px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-secondary { background: var(--bg); color: var(--primary); border: 1px solid var(--border); }
-.btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 8px; display: inline-block; width: auto; margin: 0; }
-
-/* Section title */
-.section-title { font-size: 13px; font-weight: 600; color: var(--text-light); padding: 16px 20px 8px; }
-
-/* History list */
-.history-list { padding: 0 20px; }
-.history-item { padding: 10px 0; border-bottom: 1px solid var(--bg); font-size: 13px; color: #666; display: flex; justify-content: space-between; }
-.history-score { font-weight: 600; }
-
-/* Quiz header */
-.quiz-header { padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 49px; z-index: 9; }
-.quiz-progress { font-size: 14px; font-weight: 600; }
-.quiz-timer { font-size: 14px; color: var(--wrong); font-weight: 600; }
-.quiz-tags { padding: 10px 20px 4px; display: flex; gap: 6px; flex-wrap: wrap; }
-.tag { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-.tag-type { background: var(--primary-light); color: var(--primary); }
-.tag-year { background: var(--accent-bg); color: var(--accent); }
-
-/* Question */
-.question-text { padding: 14px 20px; font-size: 16px; line-height: 1.65; word-break: keep-all; }
-
-/* Choices */
-.choices { padding: 0 20px 16px; }
-.choice { display: flex; align-items: flex-start; padding: 13px 14px; margin-bottom: 8px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 15px; line-height: 1.5; transition: all 0.15s; word-break: keep-all; }
-.choice:active { transform: scale(0.98); }
-.choice.selected { border-color: var(--primary); background: var(--primary-light); }
-.choice.correct { border-color: var(--correct); background: var(--correct-bg); }
-.choice.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
-.choice.disabled { pointer-events: none; opacity: 0.6; }
-.choice-label { min-width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--bg); font-size: 12px; font-weight: 600; margin-right: 10px; flex-shrink: 0; }
-
-/* Quiz footer */
-.quiz-footer { padding: 14px 20px; border-top: 1px solid var(--border); position: sticky; bottom: 0; background: var(--card); z-index: 9; }
-.next-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
-.next-btn:disabled { background: #ccc; cursor: not-allowed; }
-
-/* Result */
-.result-container { padding: 30px 20px; text-align: center; }
-.result-score { font-size: 56px; font-weight: 800; color: var(--primary); }
-.result-label { font-size: 15px; color: var(--text-light); margin-bottom: 6px; }
-.result-pass { display: inline-block; padding: 5px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; margin: 12px 0 20px; }
-.pass { background: var(--correct-bg); color: var(--correct); }
-.fail { background: var(--wrong-bg); color: var(--wrong); }
-.result-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
-.detail-num { font-size: 20px; font-weight: 700; }
-.detail-label { font-size: 11px; color: var(--text-light); }
-
-/* Practice setup */
-.practice-setup { padding: 20px; }
-.practice-setup h3 { font-size: 16px; margin-bottom: 16px; }
-.option-group { margin-bottom: 20px; }
-.option-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 8px; }
-.option-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-.pill { padding: 10px 18px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; cursor: pointer; background: var(--card); transition: all 0.15s; }
-.pill.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 600; }
-
-/* Wrong note list */
-.wrong-list { padding: 0 20px; }
-.wrong-item { padding: 12px 0; border-bottom: 1px solid var(--bg); }
-.wrong-q { font-size: 14px; line-height: 1.5; }
-.wrong-meta { font-size: 11px; color: var(--text-light); margin-top: 4px; }
-.wrong-count { color: var(--wrong); font-weight: 600; }
-
-/* Stats detail */
-.stats-detail { padding: 0 20px; }
-.stats-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--bg); font-size: 14px; }
-
-/* Empty state */
-.empty { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 14px; }
-
-/* Export/Import */
-.data-tools { padding: 20px; display: flex; gap: 10px; }
-
-/* Chapter cards */
-.chapter-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
-.chapter-card:hover, .chapter-card:active { border-color: var(--primary); background: var(--primary-light); }
-.chapter-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.chapter-card-title { font-size: 15px; font-weight: 600; }
-.chapter-card-count { font-size: 12px; color: var(--text-light); }
-.chapter-card-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
-.chapter-card-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-.chapter-card-bottom { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); }
-.chapter-card-rate { font-weight: 600; }
-.chapter-weak { display: inline-block; padding: 3px 10px; border-radius: 20px; background: var(--accent-bg); color: var(--accent); font-size: 11px; font-weight: 600; margin-left: 6px; }
-
-/* Toast */
-.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-.toast.show { opacity: 1; }
-
-/* Filter select */
-select.filter-select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--card); width: 100%; }
-
-/* Modal */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 50; display: none; align-items: center; justify-content: center; }
-.modal-overlay.show { display: flex; }
-.modal { background: var(--card); border-radius: 16px; padding: 24px; max-width: 340px; width: 90%; text-align: center; }
-.modal h3 { margin-bottom: 12px; }
-.modal p { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
-.modal-btns { display: flex; gap: 10px; }
-.modal-btns button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
 </style>
 </head>
-<body>
+<body class="bg-background text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-<div class="app" id="app">
-  <!-- User Select Screen -->
+<div id="app" class="max-w-[520px] mx-auto bg-surface-container-lowest min-h-screen relative shadow-[0_0_40px_rgba(26,28,25,0.06)]">
+
+  <!-- ========== User Select Screen ========== -->
   <div class="screen active" id="screen-user-select">
-    <div class="user-select">
-      <!-- 홈화면 추가 배너 -->
-      <div id="install-banner" style="display:none;width:100%;max-width:440px;padding:14px 18px;background:#fef8e8;border:1.5px solid #f0dca0;border-radius:14px;margin-bottom:32px;align-items:center;justify-content:space-between;gap:12px">
-        <span style="font-size:15px;color:#333">📲 홈 화면에 추가하면 앱처럼 사용할 수 있어요!</span>
-        <button onclick="handleInstall()" style="padding:10px 20px;border:none;border-radius:10px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">추가</button>
+    <div class="flex flex-col items-center justify-start min-h-screen px-5 pt-8 pb-10 bg-background">
+      <!-- Install Banner -->
+      <div id="install-banner" style="display:none" class="w-full max-w-[440px] p-4 bg-[#fef8e8] border border-[#f0dca0] rounded-xl mb-6 flex items-center justify-between gap-3">
+        <span class="text-[15px] text-on-surface">📲 홈 화면에 추가하면 앱처럼 사용할 수 있어요!</span>
+        <button onclick="handleInstall()" class="px-5 py-2.5 bg-primary text-on-primary rounded-full text-sm font-bold whitespace-nowrap active:scale-95 transition-transform">추가</button>
       </div>
 
-      <h2>표면처리기능장 CBT</h2>
-      <p class="subtitle">모든 응시자의 합격을 기원합니다.</p>
-      <div class="dday-badge" id="dday-badge"></div>
+      <h2 class="font-headline font-extrabold text-2xl text-primary tracking-tight">표면처리기능장 CBT</h2>
+      <p class="text-sm text-on-surface-variant mt-1 mb-2">모든 응시자의 합격을 기원합니다.</p>
+      <div id="dday-badge" class="inline-block px-5 py-1.5 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold text-sm mb-5 shadow-lg shadow-primary/25"></div>
 
-      <table class="schedule-table">
+      <!-- Exam Schedule Table -->
+      <table class="w-full max-w-[440px] border-collapse mb-6 text-[11px] rounded-xl overflow-hidden shadow-sm">
         <tr>
-          <th>구분</th>
-          <th>필기원서접수<br>(휴일제외)</th>
-          <th>필기시험</th>
-          <th>필기합격<br>발표</th>
-          <th>실기원서접수<br>(휴일제외)</th>
-          <th>실기시험</th>
-          <th>최종합격자<br>발표일</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">구분</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">필기원서접수<br>(휴일제외)</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">필기시험</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">필기합격<br>발표</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">실기원서접수<br>(휴일제외)</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">실기시험</th>
+          <th class="bg-gradient-to-r from-primary to-primary-container text-white py-2.5 px-1 font-semibold">최종합격자<br>발표일</th>
         </tr>
         <tr>
-          <td class="schedule-title">2026년 정기<br>기능장 80회</td>
-          <td>06.08<br>~<br>06.11</td>
-          <td><strong>06.27</strong></td>
-          <td>07.15</td>
-          <td>07.27<br>~<br>07.30</td>
-          <td>08.29<br>~<br>09.16</td>
-          <td>10.08</td>
+          <td class="bg-primary-fixed text-on-primary-fixed-variant font-semibold py-2 px-1 text-center">2026년 정기<br>기능장 80회</td>
+          <td class="bg-surface-container-lowest py-2 px-1 text-center border border-surface-container-high">06.08<br>~<br>06.11</td>
+          <td class="bg-surface-container-lowest py-2 px-1 text-center border border-surface-container-high"><strong>06.27</strong></td>
+          <td class="bg-surface-container-lowest py-2 px-1 text-center border border-surface-container-high">07.15</td>
+          <td class="bg-surface-container-lowest py-2 px-1 text-center border border-surface-container-high">07.27<br>~<br>07.30</td>
+          <td class="bg-surface-container-lowest py-2 px-1 text-center border border-surface-container-high">08.29<br>~<br>09.16</td>
+          <td class="bg-surface-container-lowest py-2 px-1 text-center border border-surface-container-high">10.08</td>
         </tr>
       </table>
 
-      <p class="select-label">이름을 선택하세요</p>
-      <div class="user-grid" id="user-grid"></div>
+      <p class="text-sm text-on-surface-variant font-medium mb-4">이름을 선택하세요</p>
+      <div id="user-grid" class="grid grid-cols-3 gap-2.5 w-full max-w-[320px]"></div>
     </div>
   </div>
 
-  <!-- Main App (after user select) -->
+  <!-- ========== Main App ========== -->
   <div class="screen" id="screen-main">
-    <div class="header">
+    <!-- Top App Bar -->
+    <header class="fixed top-0 w-full max-w-[520px] z-50 bg-[#fafaf5]/80 glass-effect flex items-center justify-between px-6 h-16">
       <div>
-        <h1>표면처리기능장 CBT</h1>
-        <span class="header-sub">모든 응시자의 합격을 기원합니다.</span>
-        <span class="header-dday" id="header-dday"></span>
+        <h1 class="font-headline font-extrabold text-primary tracking-tighter text-[17px]">표면처리기능장 CBT</h1>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] text-on-surface-variant">모든 응시자의 합격을 기원합니다.</span>
+          <span id="header-dday" class="text-[11px] text-wrong font-bold"></span>
+        </div>
       </div>
-      <span class="user-name" id="header-user" onclick="switchUser()"></span>
-    </div>
+      <span id="header-user" onclick="switchUser()" class="text-sm text-on-surface-variant cursor-pointer bg-surface-container-low px-3 py-1 rounded-full font-medium"></span>
+    </header>
 
-    <!-- Home Tab -->
+    <!-- ===== Home Tab ===== -->
     <div class="screen active" id="tab-home">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">전체 문제</div></div>
-        <div class="stat-card"><div class="stat-number" id="stat-solved">0</div><div class="stat-label">풀은 문제</div></div>
-        <div class="stat-card"><div class="stat-number" id="stat-rate">0%</div><div class="stat-label">정답률</div></div>
-        <div class="stat-card"><div class="stat-number" id="stat-wrong">0</div><div class="stat-label">오답 문제</div></div>
-      </div>
-      <button class="action-btn btn-primary" onclick="startExam()" style="margin-bottom:0;border-radius:12px 12px 0 0;padding-bottom:8px">📝 실전 모의고사 (60문제/60분)</button>
-      <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.8);background:var(--primary);margin:0 20px 10px;padding:0 12px 10px;border-radius:0 0 12px 12px">※ 실제 시험과 동일하게 이전 문제로 돌아갈 수 없습니다</div>
-      <button class="action-btn btn-secondary" onclick="showPracticeSetup()">📚 연습모드</button>
-      <button class="action-btn btn-secondary" onclick="startWrongReview()">🔄 오답 복습</button>
+      <main class="mt-16 px-5 pt-4 pb-28 space-y-6 bg-[#FCFCFC] min-h-screen">
+        <!-- Welcome -->
+        <section class="mt-2">
+          <p class="text-on-surface-variant font-medium text-sm" id="welcome-name">안녕하세요</p>
+          <h2 class="font-headline font-bold text-2xl text-primary mt-1">오늘의 학습을 시작할까요?</h2>
+        </section>
 
-      <div class="section-title">강별 문제풀이</div>
-      <div id="chapter-cards" style="padding:0 20px 10px"></div>
-      <div class="section-title">최근 학습</div>
-      <div class="history-list" id="history-list"></div>
+        <!-- D-Day Banner -->
+        <div class="relative overflow-hidden bg-primary-container rounded-xl p-5 text-on-primary shadow-lg group">
+          <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary rounded-full opacity-20 transition-transform group-hover:scale-125 duration-500"></div>
+          <div class="relative z-10 flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-primary-fixed-dim font-semibold text-xs tracking-wider uppercase">Exam Countdown</span>
+              <p class="text-lg font-bold">시험일 2026.06.27</p>
+            </div>
+            <div id="home-dday" class="bg-primary-fixed text-on-primary-fixed px-4 py-2 rounded-lg font-headline font-extrabold text-2xl shadow-sm">D-91</div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <section class="grid grid-cols-2 gap-4">
+          <div class="bg-surface-container-low p-4 rounded-xl space-y-2">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+              <span class="text-xs font-semibold">총 문제수</span>
+            </div>
+            <p id="stat-total" class="text-xl font-headline font-bold">0</p>
+          </div>
+          <div class="bg-surface-container-low p-4 rounded-xl space-y-2">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[20px]">task_alt</span>
+              <span class="text-xs font-semibold">풀은 문제</span>
+            </div>
+            <p id="stat-solved" class="text-xl font-headline font-bold">0</p>
+          </div>
+          <div class="bg-surface-container-low p-4 rounded-xl space-y-2">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[20px] text-primary">analytics</span>
+              <span class="text-xs font-semibold">정답률</span>
+            </div>
+            <p id="stat-rate" class="text-xl font-headline font-bold text-primary">0%</p>
+          </div>
+          <div class="bg-surface-container-low p-4 rounded-xl space-y-2">
+            <div class="flex items-center gap-2 text-on-error-container">
+              <span class="material-symbols-outlined text-[20px] text-error">error</span>
+              <span class="text-xs font-semibold">오답 수</span>
+            </div>
+            <p id="stat-wrong" class="text-xl font-headline font-bold text-error">0</p>
+          </div>
+        </section>
+
+        <!-- Main Actions -->
+        <section class="space-y-3">
+          <button onclick="startExam()" class="w-full bg-primary text-on-primary py-5 px-6 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+            <div class="text-left">
+              <h3 class="text-xl font-bold font-headline">모의고사 시작</h3>
+              <p class="text-primary-fixed-dim text-sm opacity-90">60문제 / 60분</p>
+            </div>
+            <div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center">
+              <span class="material-symbols-outlined text-white">play_arrow</span>
+            </div>
+          </button>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="showPracticeSetup()" class="bg-primary-fixed text-on-primary-fixed-variant py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+              <span class="material-symbols-outlined text-[20px]">edit_square</span>
+              연습모드
+            </button>
+            <button onclick="startWrongReview()" class="bg-surface-container-high text-on-surface-variant py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+              <span class="material-symbols-outlined text-[20px]">history_edu</span>
+              오답노트
+            </button>
+          </div>
+        </section>
+
+        <!-- Chapter Progress -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-headline font-bold text-lg text-primary">과목별 진도율</h3>
+            <span class="text-xs text-on-surface-variant font-medium">전체 보기</span>
+          </div>
+          <div id="chapter-cards" class="space-y-3"></div>
+        </section>
+
+        <!-- Recent History -->
+        <section>
+          <h3 class="font-headline font-bold text-lg text-primary mb-3">최근 학습</h3>
+          <div id="history-list"></div>
+        </section>
+      </main>
     </div>
 
-    <!-- Practice Setup Tab -->
+    <!-- ===== Practice Setup Tab ===== -->
     <div class="screen" id="tab-practice-setup">
-      <div class="practice-setup">
-        <h3>📚 연습모드 설정</h3>
-        <div class="option-group">
-          <label>문제 수</label>
-          <div class="option-pills" id="count-pills">
-            <div class="pill active" data-count="5">5문제</div>
-            <div class="pill" data-count="10">10문제</div>
-            <div class="pill" data-count="20">20문제</div>
+      <main class="mt-16 px-5 pt-4 pb-32 space-y-8">
+        <!-- Header Visual -->
+        <section class="relative overflow-hidden rounded-3xl bg-primary-container p-6 text-on-primary-container">
+          <div class="relative z-10">
+            <p class="font-label text-primary-fixed text-sm font-semibold mb-1">CBT Preparation</p>
+            <h2 class="font-headline text-2xl font-black text-white leading-tight">표면처리 기능장<br>마스터 클래스</h2>
           </div>
-        </div>
-        <div class="option-group">
-          <label>출제 범위</label>
-          <div class="option-pills" id="chapter-pills">
-            <div class="pill active" data-chapter="all">전체</div>
-            <div class="pill" data-chapter="기출">기출문제</div>
-            <div class="pill" data-chapter="1장">1장 표면처리의 기초</div>
-            <div class="pill" data-chapter="2장">2장 전기화학</div>
-            <div class="pill" data-chapter="3장">3장 전기도금</div>
-            <div class="pill" data-chapter="4장">4장 특수도금</div>
-            <div class="pill" data-chapter="5장">5장 표면검사·도금액 관리</div>
-            <div class="pill" data-chapter="6장">6장 안전관리</div>
-            <div class="pill" data-chapter="7장">7장 금속재료</div>
+          <div class="absolute -right-4 -bottom-8 opacity-20">
+            <span class="material-symbols-outlined text-[120px] text-white" style="font-variation-settings: 'FILL' 1;">science</span>
           </div>
-          <div id="chapter-desc" style="font-size:11px;color:var(--text-light);margin-top:6px"></div>
-        </div>
-        <div class="option-group" id="year-group">
-          <label>연도</label>
-          <select class="filter-select" id="year-filter">
+        </section>
+
+        <!-- Problem Count -->
+        <section class="space-y-4">
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-headline font-bold text-on-surface text-lg">문항 수 선택</h3>
+            <span class="text-xs font-medium text-on-surface-variant/70">목표에 맞는 분량 설정</span>
+          </div>
+          <div id="count-pills" class="flex gap-3">
+            <div class="pill flex-1 py-3 px-4 rounded-2xl bg-primary text-white font-bold text-center cursor-pointer shadow-lg shadow-primary/20 active:scale-95 transition-all active" data-count="5">5문제</div>
+            <div class="pill flex-1 py-3 px-4 rounded-2xl bg-surface-container-high text-on-surface-variant font-bold text-center cursor-pointer active:scale-95 transition-all" data-count="10">10문제</div>
+            <div class="pill flex-1 py-3 px-4 rounded-2xl bg-surface-container-high text-on-surface-variant font-bold text-center cursor-pointer active:scale-95 transition-all" data-count="20">20문제</div>
+          </div>
+        </section>
+
+        <!-- Chapter Filter -->
+        <section class="space-y-4">
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-headline font-bold text-on-surface text-lg">단원별 필터</h3>
+            <span id="chapter-filter-label" class="text-xs font-bold text-primary">전체 선택됨</span>
+          </div>
+          <div id="chapter-pills" class="grid grid-cols-2 gap-2">
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-primary-fixed text-on-primary-fixed-variant font-bold text-sm cursor-pointer border border-primary/10 active" data-chapter="all">
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>전체
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="기출">
+              <span class="material-symbols-outlined text-sm">history</span>기출
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="1장">
+              <span class="material-symbols-outlined text-sm">layers</span>1장 표면처리의 기초
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="2장">
+              <span class="material-symbols-outlined text-sm">bolt</span>2장 전기화학
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="3장">
+              <span class="material-symbols-outlined text-sm">fluid</span>3장 전기도금
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="4장">
+              <span class="material-symbols-outlined text-sm">precision_manufacturing</span>4장 특수도금
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="5장">
+              <span class="material-symbols-outlined text-sm">search_check</span>5장 표면검사·도금액 관리
+            </div>
+            <div class="pill flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="6장">
+              <span class="material-symbols-outlined text-sm">health_and_safety</span>6장 안전관리
+            </div>
+            <div class="pill col-span-2 flex items-center gap-2 p-3 rounded-xl bg-surface-container-low text-on-surface-variant font-semibold text-sm cursor-pointer" data-chapter="7장">
+              <span class="material-symbols-outlined text-sm">construction</span>7장 금속재료
+            </div>
+          </div>
+          <div id="chapter-desc" class="text-xs text-on-surface-variant"></div>
+        </section>
+
+        <!-- Year Filter -->
+        <section id="year-group" class="space-y-4">
+          <h3 class="font-headline font-bold text-on-surface text-lg">연도별 필터</h3>
+          <select id="year-filter" class="w-full py-3 px-4 rounded-2xl bg-surface-container-high text-on-surface font-medium border-none text-sm">
             <option value="all">전체 연도</option>
           </select>
+        </section>
+
+        <!-- CTA -->
+        <div class="pt-2 space-y-3">
+          <button onclick="startPractice()" class="w-full h-14 bg-primary text-white font-headline font-extrabold text-lg rounded-full shadow-2xl shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+            연습 시작 <span class="material-symbols-outlined">play_arrow</span>
+          </button>
+          <button onclick="showTab('home')" class="w-full py-3 bg-surface-container-high text-on-surface-variant rounded-full font-bold text-sm active:scale-95 transition-all">← 돌아가기</button>
         </div>
-        <button class="action-btn btn-primary" onclick="startPractice()" style="margin-top:10px">연습 시작</button>
-        <button class="action-btn btn-secondary" onclick="showTab('home')">← 돌아가기</button>
-      </div>
+      </main>
     </div>
 
-    <!-- Quiz Screen -->
+    <!-- ===== Quiz Screen ===== -->
     <div class="screen" id="tab-quiz">
-      <div class="quiz-header">
-        <span class="quiz-progress" id="quiz-progress">1 / 10</span>
-        <span class="quiz-timer" id="quiz-timer"></span>
-      </div>
-      <div class="quiz-tags" id="quiz-tags"></div>
-      <div class="question-text" id="quiz-question"></div>
-      <div class="choices" id="quiz-choices"></div>
-      <div class="quiz-footer">
-        <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>다음 문제 →</button>
-        <button onclick="quitQuiz()" style="width:100%;padding:10px;border:none;background:none;color:var(--text-light);font-size:13px;cursor:pointer;margin-top:6px">🏠 홈으로</button>
-      </div>
+      <!-- Quiz Top Bar -->
+      <header class="fixed top-0 w-full max-w-[520px] z-50 bg-[#FCFCFC] flex justify-between items-center px-6 h-16">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary">timer</span>
+          <span id="quiz-progress" class="font-headline font-bold tracking-tight text-lg text-primary">1 / 10</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="quiz-timer" class="font-headline font-bold text-on-surface-variant"></span>
+          <button onclick="quitQuiz()" class="text-primary font-bold active:scale-95 transition-transform">종료</button>
+        </div>
+      </header>
+
+      <main class="mt-16 px-4 pt-4 pb-8 max-w-md mx-auto w-full bg-[#FCFCFC] min-h-screen">
+        <!-- Tags -->
+        <div id="quiz-tags" class="flex flex-wrap gap-2 mb-4 px-1"></div>
+
+        <!-- Question -->
+        <div class="mb-6 px-1">
+          <div id="quiz-question-label" class="inline-block mb-3 px-2 py-0.5 rounded bg-primary text-on-primary text-[10px] font-bold tracking-widest font-headline">QUESTION 01</div>
+          <h1 id="quiz-question" class="text-xl font-bold leading-relaxed tracking-tight text-on-surface font-headline"></h1>
+        </div>
+
+        <!-- Choices -->
+        <div id="quiz-choices" class="space-y-3 mb-6"></div>
+
+        <!-- Action Button (in flow) -->
+        <div class="px-1 pb-8">
+          <button id="next-btn" onclick="nextQuestion()" disabled class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-4 rounded-full font-bold shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-40 disabled:shadow-none">
+            <span>다음 문제</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      </main>
     </div>
 
-    <!-- Result Screen -->
+    <!-- ===== Result Screen ===== -->
     <div class="screen" id="tab-result">
-      <div class="result-container" id="result-container"></div>
+      <div id="result-container" class="pt-24 px-6 pb-32 max-w-md mx-auto"></div>
     </div>
 
-    <!-- Wrong Notes Tab -->
+    <!-- ===== Wrong Notes Tab ===== -->
     <div class="screen" id="tab-wrong">
-      <div class="section-title">오답노트</div>
-      <div class="wrong-list" id="wrong-list"></div>
+      <main class="mt-16 px-5 pt-4 pb-28 bg-[#FCFCFC] min-h-screen">
+        <h3 class="font-headline font-bold text-lg text-primary mb-4">오답노트</h3>
+        <div id="wrong-list"></div>
+      </main>
     </div>
 
-    <!-- Stats Tab -->
+    <!-- ===== Stats Tab ===== -->
     <div class="screen" id="tab-stats">
-      <div class="section-title">학습 통계</div>
-      <div class="stats-detail" id="stats-detail"></div>
-      <div class="section-title">모의고사 이력</div>
-      <div class="history-list" id="exam-history"></div>
-      <div class="section-title">데이터 관리</div>
-      <div class="data-tools">
-        <button class="btn-sm btn-secondary" onclick="exportData()">📤 내보내기</button>
-        <button class="btn-sm btn-secondary" onclick="importData()">📥 가져오기</button>
-      </div>
+      <main class="mt-16 px-5 pt-4 pb-28 space-y-6 bg-[#FCFCFC] min-h-screen">
+        <h3 class="font-headline font-bold text-lg text-primary">학습 통계</h3>
+        <div id="stats-detail" class="space-y-1"></div>
+        <h3 class="font-headline font-bold text-lg text-primary pt-4">모의고사 이력</h3>
+        <div id="exam-history"></div>
+        <h3 class="font-headline font-bold text-lg text-primary pt-4">데이터 관리</h3>
+        <div class="flex gap-3">
+          <button onclick="exportData()" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-surface-container-high text-on-surface-variant font-bold text-sm active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-[18px]">upload</span>내보내기
+          </button>
+          <button onclick="importData()" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-surface-container-high text-on-surface-variant font-bold text-sm active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-[18px]">download</span>가져오기
+          </button>
+        </div>
+      </main>
     </div>
 
-    <!-- Bottom Tabs -->
-    <div class="tabs" id="bottom-tabs">
-      <div class="tab active" onclick="showTab('home')"><span class="tab-icon">🏠</span>홈</div>
-      <div class="tab" onclick="showPracticeSetup()"><span class="tab-icon">📚</span>연습</div>
-      <div class="tab" onclick="showTab('wrong');renderWrongNotes()"><span class="tab-icon">❌</span>오답</div>
-      <div class="tab" onclick="showTab('stats');renderStats()"><span class="tab-icon">📊</span>통계</div>
-    </div>
+    <!-- ===== Bottom Navigation ===== -->
+    <nav id="bottom-tabs" class="fixed bottom-0 left-0 right-0 max-w-[520px] mx-auto z-50 bg-[#fafaf5]/80 glass-effect rounded-t-[24px] shadow-[0_-4px_20px_rgba(26,28,25,0.04)] flex justify-around items-center px-4 pb-6 pt-3">
+      <a class="tab flex flex-col items-center justify-center px-4 py-1.5 rounded-2xl transition-all duration-200 active text-primary bg-primary-fixed/30" onclick="showTab('home')">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+        <span class="font-headline text-[11px] font-semibold mt-1">홈</span>
+      </a>
+      <a class="tab flex flex-col items-center justify-center px-4 py-1.5 rounded-2xl transition-all duration-200 text-on-surface/50" onclick="showPracticeSetup()">
+        <span class="material-symbols-outlined">edit_note</span>
+        <span class="font-headline text-[11px] font-semibold mt-1">연습</span>
+      </a>
+      <a class="tab flex flex-col items-center justify-center px-4 py-1.5 rounded-2xl transition-all duration-200 text-on-surface/50" onclick="showTab('wrong');renderWrongNotes()">
+        <span class="material-symbols-outlined">history_edu</span>
+        <span class="font-headline text-[11px] font-semibold mt-1">오답</span>
+      </a>
+      <a class="tab flex flex-col items-center justify-center px-4 py-1.5 rounded-2xl transition-all duration-200 text-on-surface/50" onclick="showTab('stats');renderStats()">
+        <span class="material-symbols-outlined">leaderboard</span>
+        <span class="font-headline text-[11px] font-semibold mt-1">통계</span>
+      </a>
+    </nav>
   </div>
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast"></div>
+<div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-6 py-3 rounded-full text-sm font-semibold z-[100] opacity-0 transition-opacity duration-300 pointer-events-none shadow-xl shadow-primary/30"></div>
 
 <!-- Modal -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h3 id="modal-title"></h3>
-    <p id="modal-msg"></p>
-    <div class="modal-btns" id="modal-btns"></div>
+<div id="modal" class="fixed inset-0 bg-[#1a1c19]/50 glass-effect z-50 hidden items-center justify-center">
+  <div class="bg-surface-container-lowest rounded-[24px] p-7 max-w-[340px] w-[90%] text-center shadow-[0_20px_60px_rgba(26,28,25,0.15)]">
+    <h3 id="modal-title" class="font-headline font-bold text-lg mb-3"></h3>
+    <p id="modal-msg" class="text-sm text-on-surface-variant mb-5 leading-relaxed"></p>
+    <div id="modal-btns" class="flex gap-3"></div>
   </div>
 </div>
 
-<!-- Hidden file input for import -->
+<!-- Hidden file input -->
 <input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
 
 <script>
@@ -380,13 +479,12 @@ function initUserSelect() {
   grid.innerHTML = '';
   USERS.forEach(name => {
     const btn = document.createElement('div');
-    btn.className = 'user-btn';
+    btn.className = 'py-4 px-2 rounded-xl bg-surface-container-lowest font-semibold text-sm cursor-pointer text-center shadow-sm hover:bg-primary-fixed hover:text-on-primary-fixed-variant active:scale-95 transition-all duration-200 text-on-surface';
     btn.textContent = name;
     btn.onclick = () => selectUser(name);
     grid.appendChild(btn);
   });
 
-  // Check saved session
   const saved = localStorage.getItem('cbt_session');
   if (saved && USERS.includes(saved)) {
     selectUser(saved);
@@ -397,10 +495,10 @@ function selectUser(name) {
   currentUser = name;
   localStorage.setItem('cbt_session', name);
   document.getElementById('header-user').textContent = name + ' ▼';
+  document.getElementById('welcome-name').textContent = `안녕하세요, ${name} 님`;
   document.getElementById('screen-user-select').classList.remove('active');
   document.getElementById('screen-main').classList.add('active');
 
-  // Check for interrupted quiz
   const quizState = load('quiz_state', null);
   if (quizState) {
     showModal('이어서 풀기', '진행 중인 시험이 있습니다. 이어서 풀까요?', [
@@ -438,22 +536,20 @@ function updateHome() {
   document.getElementById('stat-rate').textContent = totalAttempts > 0 ? Math.round(correctCount / totalAttempts * 100) + '%' : '0%';
   document.getElementById('stat-wrong').textContent = Object.keys(wrong).length.toLocaleString();
 
-  // Chapter cards
   renderChapterCards();
 
-  // History
   const histEl = document.getElementById('history-list');
   const recent = history.slice(-5).reverse();
   if (recent.length === 0) {
-    histEl.innerHTML = '<div class="empty">아직 학습 기록이 없습니다</div>';
+    histEl.innerHTML = '<div class="text-center py-10 text-on-surface-variant text-sm">아직 학습 기록이 없습니다</div>';
   } else {
     histEl.innerHTML = recent.map(h => {
       const pct = Math.round(h.score / h.total * 100);
       const pass = pct >= 60;
       const mode = h.mode === 'exam' ? '모의고사' : h.mode === 'practice' ? '연습' : '오답복습';
-      return `<div class="history-item">
-        <span>${h.date} ${mode} — ${h.total}문제</span>
-        <span class="history-score" style="color:${pass ? 'var(--correct)' : 'var(--wrong)'}">${pct}%</span>
+      return `<div class="flex justify-between items-center py-3 border-b border-surface-container-low text-sm">
+        <span class="text-on-surface-variant">${h.date} ${mode} — ${h.total}문제</span>
+        <span class="font-headline font-bold ${pass ? 'text-correct' : 'text-wrong'}">${pct}%</span>
       </div>`;
     }).join('');
   }
@@ -463,7 +559,6 @@ function updateHome() {
 // Tab navigation
 // ============================================================
 function showTab(name) {
-  // Hide all tabs
   ['home', 'practice-setup', 'quiz', 'result', 'wrong', 'stats'].forEach(t => {
     const el = document.getElementById('tab-' + t);
     if (el) el.classList.remove('active');
@@ -472,33 +567,40 @@ function showTab(name) {
 
   // Update bottom tab highlight
   const tabs = document.querySelectorAll('#bottom-tabs .tab');
-  tabs.forEach(t => t.classList.remove('active'));
+  tabs.forEach(t => {
+    t.classList.remove('text-primary', 'bg-primary-fixed/30');
+    t.classList.add('text-on-surface/50');
+    t.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24";
+  });
   const tabMap = { home: 0, 'practice-setup': 1, wrong: 2, stats: 3 };
-  if (tabMap[name] !== undefined) tabs[tabMap[name]].classList.add('active');
+  if (tabMap[name] !== undefined) {
+    const activeTab = tabs[tabMap[name]];
+    activeTab.classList.remove('text-on-surface/50');
+    activeTab.classList.add('text-primary', 'bg-primary-fixed/30');
+    activeTab.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24";
+  }
 
   // Show/hide bottom tabs during quiz
   document.getElementById('bottom-tabs').style.display = (name === 'quiz' || name === 'result') ? 'none' : 'flex';
 }
 
 // ============================================================
-// Chapter Cards (강별 문제풀이)
+// Chapter Cards
 // ============================================================
 const CHAPTER_INFO = {
-  '기출': { name: '기출문제', desc: '기능장/산업기사 기출문제', icon: '📝' },
-  '1장': { name: '1장 표면처리의 기초', desc: '도금 기초지식·탈지·연마·전처리', icon: '🔧' },
-  '2장': { name: '2장 전기화학', desc: '전기화학 기초·전기분해·전극반응', icon: '⚡' },
-  '3장': { name: '3장 전기도금', desc: '구리·니켈·크롬·아연·귀금속 도금', icon: '🔩' },
-  '4장': { name: '4장 특수도금', desc: '화성처리·무전해도금·용융도금·건식도금', icon: '🧪' },
-  '5장': { name: '5장 표면검사·도금액 관리', desc: '품질검사·도금액 분석·밀착성', icon: '🔬' },
-  '6장': { name: '6장 안전관리', desc: '산업안전·약품취급·자동생산시스템', icon: '⚠️' },
-  '7장': { name: '7장 금속재료', desc: '금속조직·열처리·합금·비철금속', icon: '🔗' }
+  '기출': { name: '기출문제', desc: '기능장/산업기사 기출문제', icon: 'history' },
+  '1장': { name: '1장 표면처리의 기초', desc: '도금 기초지식·탈지·연마·전처리', icon: 'layers' },
+  '2장': { name: '2장 전기화학', desc: '전기화학 기초·전기분해·전극반응', icon: 'bolt' },
+  '3장': { name: '3장 전기도금', desc: '구리·니켈·크롬·아연·귀금속 도금', icon: 'fluid' },
+  '4장': { name: '4장 특수도금', desc: '화성처리·무전해도금·용융도금·건식도금', icon: 'precision_manufacturing' },
+  '5장': { name: '5장 표면검사·도금액 관리', desc: '품질검사·도금액 분석·밀착성', icon: 'search_check' },
+  '6장': { name: '6장 안전관리', desc: '산업안전·약품취급·자동생산시스템', icon: 'health_and_safety' },
+  '7장': { name: '7장 금속재료', desc: '금속조직·열처리·합금·비철금속', icon: 'construction' }
 };
 
 function getChapterStats() {
   const history = load('history', []);
   const chapterHistory = {};
-
-  // history에서 강별 통계 집계
   history.forEach(h => {
     if (h.chapter) {
       if (!chapterHistory[h.chapter]) chapterHistory[h.chapter] = { score: 0, total: 0 };
@@ -506,18 +608,14 @@ function getChapterStats() {
       chapterHistory[h.chapter].total += h.total;
     }
   });
-
-  // 강별 문제 수 + 풀이 현황
   const solved = new Set(load('solved', []));
   const chapters = {};
-
   QUESTIONS.forEach(q => {
     const ch = q.chapter || '기출';
     if (!chapters[ch]) chapters[ch] = { total: 0, solved: 0 };
     chapters[ch].total++;
     if (solved.has(q.id)) chapters[ch].solved++;
   });
-
   return { chapters, chapterHistory };
 }
 
@@ -525,7 +623,6 @@ function renderChapterCards() {
   const { chapters, chapterHistory } = getChapterStats();
   const el = document.getElementById('chapter-cards');
 
-  // 취약 강 찾기: 정답률이 가장 낮은 교재 강
   let weakest = null;
   let weakestRate = 100;
   Object.entries(chapterHistory).forEach(([ch, stat]) => {
@@ -535,46 +632,48 @@ function renderChapterCards() {
     }
   });
 
-  // 랜덤 풀이 카드 (맨 위)
   const totalTextbook = QUESTIONS.filter(q => q.source === '교재').length;
-  el.innerHTML = `<div class="chapter-card" onclick="startChapterQuiz('랜덤')" style="border-color:var(--primary);background:var(--primary-light)">
-    <div class="chapter-card-top">
-      <span class="chapter-card-title">🎲 각 장의 랜덤 풀이</span>
-      <span class="chapter-card-count">${totalTextbook}문제</span>
+  el.innerHTML = `<div onclick="startChapterQuiz('랜덤')" class="bg-primary-fixed p-5 rounded-xl cursor-pointer active:scale-[0.98] transition-all border border-primary/10 shadow-sm">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-sm font-bold text-on-primary-fixed-variant flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">shuffle</span>각 장의 랜덤 풀이
+      </span>
+      <span class="text-sm font-headline font-bold text-primary">${totalTextbook}문제</span>
     </div>
-    <div class="chapter-card-bottom">
-      <span>1~7장 전체에서 랜덤 출제</span>
-    </div>
+    <span class="text-xs text-on-surface-variant">1~7장 전체에서 랜덤 출제</span>
   </div>`;
 
   const order = ['1장', '2장', '3장', '4장', '5장', '6장', '7장', '기출'];
   el.innerHTML += order.map(ch => {
-    const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: '📖' };
+    const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: 'book' };
     const stat = chapters[ch] || { total: 0, solved: 0 };
     const hist = chapterHistory[ch] || { score: 0, total: 0 };
     const progress = stat.total > 0 ? Math.round(stat.solved / stat.total * 100) : 0;
     const rate = hist.total > 0 ? Math.round(hist.score / hist.total * 100) : -1;
-    const rateColor = rate >= 60 ? 'var(--correct)' : rate >= 0 ? 'var(--wrong)' : 'var(--text-light)';
     const isWeak = ch === weakest;
-    const barColor = rate >= 60 ? 'var(--correct)' : rate >= 0 ? 'var(--accent)' : 'var(--primary)';
 
-    return `<div class="chapter-card" onclick="startChapterQuiz('${ch}')">
-      <div class="chapter-card-top">
-        <span class="chapter-card-title">${info.icon} ${info.name}${isWeak ? '<span class="chapter-weak">취약</span>' : ''}</span>
-        <span class="chapter-card-count">${stat.total}문제</span>
+    return `<div onclick="startChapterQuiz('${ch}')" class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10 shadow-sm cursor-pointer active:scale-[0.98] transition-all ${progress === 0 ? 'opacity-60' : ''}">
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-sm font-bold text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px] text-primary">${info.icon}</span>
+          ${info.name}${isWeak ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-accent-bg text-accent text-[10px] font-bold">취약</span>' : ''}
+        </span>
+        <span class="text-sm font-headline font-bold ${rate >= 60 ? 'text-correct' : rate >= 0 ? 'text-wrong' : 'text-on-surface-variant'}">${rate >= 0 ? rate + '%' : ''}</span>
       </div>
-      <div class="chapter-card-bar"><div class="chapter-card-fill" style="width:${progress}%;background:${barColor}"></div></div>
-      <div class="chapter-card-bottom">
+      <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-300 ${rate >= 60 ? 'bg-correct' : rate >= 0 ? 'bg-accent' : 'bg-primary'}" style="width: ${progress}%;"></div>
+      </div>
+      <div class="flex justify-between mt-2 text-[11px] text-on-surface-variant">
         <span>진행률 ${progress}% (${stat.solved}/${stat.total})</span>
-        <span class="chapter-card-rate" style="color:${rateColor}">${rate >= 0 ? '정답률 ' + rate + '%' : '미학습'}</span>
+        <span class="font-semibold">${stat.total}문제</span>
       </div>
     </div>`;
   }).join('');
 
-  // 취약 강 제안
   if (weakest && weakestRate < 60) {
-    el.innerHTML += `<div style="padding:10px 14px;background:var(--accent-bg);border-radius:10px;font-size:13px;color:var(--accent);margin-top:4px">
-      💡 <strong>${CHAPTER_INFO[weakest]?.name || weakest}</strong>의 정답률이 ${weakestRate}%로 가장 낮습니다. 집중 학습을 추천합니다!
+    el.innerHTML += `<div class="p-3 bg-accent-bg rounded-xl text-xs text-accent flex items-center gap-2">
+      <span class="material-symbols-outlined text-[16px]">lightbulb</span>
+      <strong>${CHAPTER_INFO[weakest]?.name || weakest}</strong>의 정답률이 ${weakestRate}%로 가장 낮습니다. 집중 학습을 추천합니다!
     </div>`;
   }
 }
@@ -587,12 +686,9 @@ function startChapterQuiz(chapter) {
     pool = QUESTIONS.filter(q => (q.chapter || '기출') === chapter);
   }
   if (pool.length === 0) { toast('해당 강의 문제가 없습니다'); return; }
-
   const unsolved = getUnsolvedQuestions(pool);
   const shuffled = shuffleArray(unsolved);
   const selected = shuffled.slice(0, Math.min(20, shuffled.length));
-
-  // 강별 모드로 시작
   quiz.chapterMode = chapter;
   startQuiz(selected, 'chapter', 0);
 }
@@ -603,17 +699,30 @@ function startChapterQuiz(chapter) {
 function showPracticeSetup() {
   showTab('practice-setup');
 
-  // Pill click handlers
   document.querySelectorAll('#count-pills .pill').forEach(p => {
     p.onclick = () => {
-      document.querySelectorAll('#count-pills .pill').forEach(x => x.classList.remove('active'));
-      p.classList.add('active');
+      document.querySelectorAll('#count-pills .pill').forEach(x => {
+        x.classList.remove('active', 'bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+        x.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+      });
+      p.classList.add('active', 'bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+      p.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
     };
   });
+
   document.querySelectorAll('#chapter-pills .pill').forEach(p => {
     p.onclick = () => {
-      document.querySelectorAll('#chapter-pills .pill').forEach(x => x.classList.remove('active'));
-      p.classList.add('active');
+      document.querySelectorAll('#chapter-pills .pill').forEach(x => {
+        x.classList.remove('active', 'bg-primary-fixed', 'text-on-primary-fixed-variant', 'font-bold', 'border', 'border-primary/10');
+        x.classList.add('bg-surface-container-low', 'text-on-surface-variant', 'font-semibold');
+        const icon = x.querySelector('.material-symbols-outlined');
+        if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+      });
+      p.classList.add('active', 'bg-primary-fixed', 'text-on-primary-fixed-variant', 'font-bold', 'border', 'border-primary/10');
+      p.classList.remove('bg-surface-container-low', 'text-on-surface-variant', 'font-semibold');
+      const icon = p.querySelector('.material-symbols-outlined');
+      if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+
       const ch = p.dataset.chapter;
       const desc = document.getElementById('chapter-desc');
       const yearGroup = document.getElementById('year-group');
@@ -628,9 +737,7 @@ function populateYearFilter() {
   const years = [...new Set(QUESTIONS.map(q => q.year))].sort();
   const sel = document.getElementById('year-filter');
   sel.innerHTML = '<option value="all">전체 연도</option>';
-  years.forEach(y => {
-    sel.innerHTML += `<option value="${y}">${y}년</option>`;
-  });
+  years.forEach(y => { sel.innerHTML += `<option value="${y}">${y}년</option>`; });
 }
 
 // ============================================================
@@ -648,8 +755,6 @@ function shuffleArray(arr) {
 function getUnsolvedQuestions(pool) {
   const solved = new Set(load('solved', []));
   let unsolved = pool.filter(q => !solved.has(q.id));
-
-  // All solved? Reset!
   if (unsolved.length === 0) {
     save('solved', []);
     toast('모든 문제를 풀었습니다! 다시 처음부터 시작합니다.');
@@ -672,13 +777,11 @@ function startPractice() {
   let pool = [...QUESTIONS];
   if (chapter !== 'all') pool = pool.filter(q => (q.chapter || '기출') === chapter);
   if (year !== 'all') pool = pool.filter(q => q.year === year);
-
   if (pool.length === 0) { toast('해당 조건의 문제가 없습니다'); return; }
 
   const unsolved = getUnsolvedQuestions(pool);
   const shuffled = shuffleArray(unsolved);
   const selected = shuffled.slice(0, Math.min(count, shuffled.length));
-
   quiz.chapterMode = chapter;
   startQuiz(selected, 'practice', 0);
 }
@@ -687,35 +790,24 @@ function startWrongReview() {
   const wrong = load('wrong', {});
   const wrongIds = Object.keys(wrong);
   if (wrongIds.length === 0) { toast('오답 문제가 없습니다'); return; }
-
   const pool = QUESTIONS.filter(q => wrongIds.includes(q.id));
   const selected = shuffleArray(pool).slice(0, Math.min(20, pool.length));
   startQuiz(selected, 'wrong_review', 0);
 }
 
 function startQuiz(questions, mode, timeLimit) {
-  // Shuffle choices for each question
   quiz.questions = questions.map(q => {
     const indices = [0, 1, 2, 3];
     const shuffled = shuffleArray(indices);
-    return {
-      ...q,
-      shuffledChoices: shuffled.map(i => q.choices[i]),
-      shuffledAnswer: shuffled.indexOf(q.answer),
-      originalAnswer: q.answer
-    };
+    return { ...q, shuffledChoices: shuffled.map(i => q.choices[i]), shuffledAnswer: shuffled.indexOf(q.answer), originalAnswer: q.answer };
   });
-
   quiz.current = 0;
   quiz.answers = new Array(questions.length).fill(null);
   quiz.mode = mode;
   quiz.startTime = Date.now();
   quiz.timeLimit = timeLimit;
-
   showTab('quiz');
   renderQuestion();
-
-  // Timer
   if (quiz.timer) clearInterval(quiz.timer);
   if (timeLimit > 0) {
     quiz.timer = setInterval(updateTimer, 1000);
@@ -723,7 +815,6 @@ function startQuiz(questions, mode, timeLimit) {
   } else {
     document.getElementById('quiz-timer').textContent = '';
   }
-
   saveQuizState();
 }
 
@@ -731,7 +822,6 @@ function resumeQuiz(state) {
   quiz = { ...state, timer: null };
   showTab('quiz');
   renderQuestion();
-
   if (quiz.timeLimit > 0) {
     quiz.timer = setInterval(updateTimer, 1000);
     updateTimer();
@@ -739,31 +829,22 @@ function resumeQuiz(state) {
 }
 
 function saveQuizState() {
-  save('quiz_state', {
-    questions: quiz.questions,
-    current: quiz.current,
-    answers: quiz.answers,
-    mode: quiz.mode,
-    startTime: quiz.startTime,
-    timeLimit: quiz.timeLimit
-  });
+  save('quiz_state', { questions: quiz.questions, current: quiz.current, answers: quiz.answers, mode: quiz.mode, startTime: quiz.startTime, timeLimit: quiz.timeLimit });
 }
 
 function updateTimer() {
   const elapsed = Math.floor((Date.now() - quiz.startTime) / 1000);
   const remaining = quiz.timeLimit - elapsed;
-
   if (remaining <= 0) {
     clearInterval(quiz.timer);
     toast('시간 종료! 자동 제출합니다.');
     finishQuiz();
     return;
   }
-
   const min = Math.floor(remaining / 60);
   const sec = remaining % 60;
-  document.getElementById('quiz-timer').textContent = `⏱ ${min}:${sec.toString().padStart(2, '0')}`;
-  document.getElementById('quiz-timer').style.color = remaining < 300 ? 'var(--wrong)' : 'var(--text-light)';
+  document.getElementById('quiz-timer').textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+  document.getElementById('quiz-timer').style.color = remaining < 300 ? '#e74c3c' : '';
 }
 
 function renderQuestion() {
@@ -771,57 +852,56 @@ function renderQuestion() {
   const labels = ['가', '나', '다', '라'];
 
   document.getElementById('quiz-progress').textContent = `${quiz.current + 1} / ${quiz.questions.length}`;
+  document.getElementById('quiz-question-label').textContent = `QUESTION ${String(quiz.current + 1).padStart(2, '0')}`;
 
   // Tags
   const chapterLabel = q.chapter_name ? `${q.chapter} ${q.chapter_name}` : q.chapter;
-  const chapterTag = q.chapter && q.chapter !== '기출' ? `<span class="tag tag-type">${chapterLabel}</span>` : '';
-  const typeTag = q.exam_type !== '교재' ? `<span class="tag tag-type">${q.exam_type}</span>` : '';
-  const yearTag = q.year !== '교재' ? `<span class="tag tag-year">${q.year}년</span>` : '';
+  const chapterTag = q.chapter && q.chapter !== '기출' ? `<span class="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-[11px] font-bold tracking-wider">${chapterLabel}</span>` : '';
+  const typeTag = q.exam_type && q.exam_type !== '교재' ? `<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-secondary-fixed-variant text-[11px] font-semibold tracking-wider">${q.exam_type}</span>` : '';
+  const yearTag = q.year && q.year !== '교재' ? `<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-secondary-fixed-variant text-[11px] font-semibold tracking-wider">${q.year}년</span>` : '';
   document.getElementById('quiz-tags').innerHTML = `${chapterTag}${typeTag}${yearTag}`;
 
-  // Question
   document.getElementById('quiz-question').textContent = q.question;
 
   // Choices
   const choicesEl = document.getElementById('quiz-choices');
   choicesEl.innerHTML = '';
   q.shuffledChoices.forEach((choice, i) => {
-    const div = document.createElement('div');
-    div.className = 'choice';
-    div.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice}</span>`;
-    div.onclick = () => selectChoice(i);
-    choicesEl.appendChild(div);
+    const btn = document.createElement('button');
+    btn.className = 'choice w-full text-left p-5 rounded-xl transition-all duration-200 bg-surface-container-lowest hover:bg-surface-container flex items-start gap-4';
+    btn.innerHTML = `<span class="choice-label flex-shrink-0 w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold font-headline text-sm">${labels[i]}</span>
+      <span class="text-[15px] font-medium text-on-surface leading-snug">${choice}</span>`;
+    btn.onclick = () => selectChoice(i);
+    choicesEl.appendChild(btn);
   });
 
-  // Restore previous answer if exists
   if (quiz.answers[quiz.current] !== null) {
     showAnswerResult(quiz.answers[quiz.current]);
   }
 
-  // Next button
   const isLast = quiz.current >= quiz.questions.length - 1;
   const btn = document.getElementById('next-btn');
-  btn.textContent = isLast ? '결과 보기' : '다음 문제 →';
+  btn.querySelector('span:first-child').textContent = isLast ? '결과 보기' : '다음 문제';
   btn.disabled = quiz.answers[quiz.current] === null;
 
   window.scrollTo(0, 0);
 }
 
 function selectChoice(index) {
-  if (quiz.answers[quiz.current] !== null) return; // Already answered
-
+  if (quiz.answers[quiz.current] !== null) return;
   quiz.answers[quiz.current] = index;
   document.getElementById('next-btn').disabled = false;
 
   if (quiz.mode === 'practice' || quiz.mode === 'wrong_review' || quiz.mode === 'chapter') {
     showAnswerResult(index);
   } else {
-    // Exam mode: just highlight selection
     document.querySelectorAll('.choice').forEach((c, i) => {
-      c.classList.toggle('selected', i === index);
+      if (i === index) {
+        c.classList.remove('bg-surface-container-lowest');
+        c.classList.add('bg-primary-fixed', 'ring-2', 'ring-primary-container');
+      }
     });
   }
-
   saveQuizState();
 }
 
@@ -830,36 +910,42 @@ function showAnswerResult(selected) {
   const correct = q.shuffledAnswer;
 
   document.querySelectorAll('.choice').forEach((c, i) => {
-    c.classList.add('disabled');
+    c.style.pointerEvents = 'none';
+    c.classList.add('opacity-60');
+    const labelSpan = c.querySelector('.choice-label');
     const textSpan = c.querySelector('span:last-child');
+
     if (i === correct) {
-      c.classList.add('correct');
-      c.querySelector('.choice-label').style.background = 'var(--correct)';
-      c.querySelector('.choice-label').style.color = '#fff';
-      textSpan.innerHTML += ' <strong style="color:var(--correct);margin-left:6px">✓ 정답</strong>';
+      c.classList.remove('bg-surface-container-lowest', 'opacity-60');
+      c.classList.add('bg-correct-bg', 'ring-2', 'ring-correct');
+      c.style.opacity = '1';
+      labelSpan.className = 'choice-label flex-shrink-0 w-8 h-8 rounded-full bg-correct text-white flex items-center justify-center font-bold font-headline text-sm';
+      textSpan.innerHTML += ' <strong class="text-correct ml-2">✓ 정답</strong>';
     }
     if (i === selected && selected !== correct) {
-      c.classList.add('wrong');
-      c.querySelector('.choice-label').style.background = 'var(--wrong)';
-      c.querySelector('.choice-label').style.color = '#fff';
-      textSpan.innerHTML += ' <strong style="color:var(--wrong);margin-left:6px">✗ 오답</strong>';
+      c.classList.remove('bg-surface-container-lowest', 'opacity-60');
+      c.classList.add('bg-wrong-bg', 'ring-2', 'ring-wrong');
+      c.style.opacity = '1';
+      labelSpan.className = 'choice-label flex-shrink-0 w-8 h-8 rounded-full bg-wrong text-white flex items-center justify-center font-bold font-headline text-sm';
+      textSpan.innerHTML += ' <strong class="text-wrong ml-2">✗ 오답</strong>';
     }
   });
 
-  // 해설 표시
   if (q.explanation) {
     const expEl = document.createElement('div');
-    expEl.style.cssText = 'padding:12px 16px;margin:0 0 8px;background:var(--primary-light);border-radius:10px;font-size:13px;line-height:1.6;color:var(--text)';
-    expEl.innerHTML = `<strong style="color:var(--primary)">💡 해설</strong><br>${q.explanation}`;
+    expEl.className = 'bg-surface-container-low rounded-xl p-6 relative overflow-hidden';
+    expEl.innerHTML = `<div class="absolute top-0 right-0 p-4 opacity-5"><span class="material-symbols-outlined text-6xl">lightbulb</span></div>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-primary text-xl">info</span>
+        <span class="text-xs font-bold text-primary-container tracking-widest uppercase font-headline">해설</span>
+      </div>
+      <p class="text-on-surface-variant text-sm leading-relaxed">${q.explanation}</p>`;
     document.getElementById('quiz-choices').appendChild(expEl);
   }
 }
 
 function nextQuestion() {
-  if (quiz.current >= quiz.questions.length - 1) {
-    finishQuiz();
-    return;
-  }
+  if (quiz.current >= quiz.questions.length - 1) { finishQuiz(); return; }
   quiz.current++;
   renderQuestion();
   saveQuizState();
@@ -876,7 +962,6 @@ function finishQuiz() {
   if (quiz.timer) clearInterval(quiz.timer);
   save('quiz_state', null);
 
-  // Calculate results
   let score = 0;
   const wrongIds = {};
   const solved = load('solved', []);
@@ -885,12 +970,9 @@ function finishQuiz() {
   quiz.questions.forEach((q, i) => {
     const userAnswer = quiz.answers[i];
     const isCorrect = userAnswer === q.shuffledAnswer;
-
     if (!solved.includes(q.id)) solved.push(q.id);
-
     if (isCorrect) {
       score++;
-      // Remove from wrong if previously wrong
       if (existingWrong[q.id]) delete existingWrong[q.id];
     } else {
       existingWrong[q.id] = (existingWrong[q.id] || 0) + 1;
@@ -901,20 +983,13 @@ function finishQuiz() {
   save('solved', solved);
   save('wrong', existingWrong);
 
-  // Save history
   const history = load('history', []);
   const elapsed = Math.floor((Date.now() - quiz.startTime) / 1000);
   history.push({
     date: new Date().toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
-    mode: quiz.mode,
-    score: score,
-    total: quiz.questions.length,
-    time: elapsed,
-    chapter: quiz.chapterMode || 'all'
+    mode: quiz.mode, score: score, total: quiz.questions.length, time: elapsed, chapter: quiz.chapterMode || 'all'
   });
   save('history', history);
-
-  // Show result
   showResult(score, quiz.questions.length, elapsed, Object.keys(wrongIds).length);
 }
 
@@ -923,26 +998,85 @@ function showResult(score, total, elapsed, wrongCount) {
   const pass = pct >= 60;
   const min = Math.floor(elapsed / 60);
   const sec = elapsed % 60;
+  const modeLabel = quiz.mode === 'exam' ? '모의고사' : quiz.mode === 'chapter' ? (CHAPTER_INFO[quiz.chapterMode]?.name || quiz.chapterMode) : quiz.mode === 'practice' ? '연습' : '오답복습';
 
   const container = document.getElementById('result-container');
   container.innerHTML = `
-    <div class="result-label">${quiz.mode === 'exam' ? '모의고사' : quiz.mode === 'chapter' ? (CHAPTER_INFO[quiz.chapterMode]?.name || quiz.chapterMode) : quiz.mode === 'practice' ? '연습' : '오답복습'} 결과</div>
-    <div class="result-score">${pct}%</div>
-    <div class="result-pass ${pass ? 'pass' : 'fail'}">${pass ? '합격 (60점 이상)' : '불합격 (60점 미만)'}</div>
-    <div class="result-details">
-      <div><div class="detail-num" style="color:var(--correct)">${score}</div><div class="detail-label">정답</div></div>
-      <div><div class="detail-num" style="color:var(--wrong)">${total - score}</div><div class="detail-label">오답</div></div>
-      <div><div class="detail-num">${min}:${sec.toString().padStart(2, '0')}</div><div class="detail-label">소요시간</div></div>
-    </div>
-    ${wrongCount > 0 ? `<button class="action-btn btn-primary" onclick="reviewWrongFromResult()" style="margin-top:20px">❌ 오답 ${wrongCount}문제 복습</button>` : ''}
-    <button class="action-btn btn-secondary" onclick="showTab('home');updateHome()" style="margin-top:${wrongCount > 0 ? '0' : '20px'}">🏠 홈으로</button>
-  `;
+    <section class="flex flex-col items-center text-center mb-10">
+      <div class="relative w-56 h-56 flex items-center justify-center mb-6">
+        <div class="absolute inset-0 rounded-full p-3 shadow-lg" style="background: conic-gradient(from 0deg, #134237 0% ${pct}%, #e8e8e3 ${pct}% 100%);">
+          <div class="w-full h-full bg-surface-container-lowest rounded-full flex flex-col items-center justify-center">
+            <span class="text-on-surface-variant font-headline font-bold text-xs tracking-widest uppercase mb-1">FINAL SCORE</span>
+            <div class="flex items-baseline">
+              <span class="text-primary font-headline font-extrabold text-6xl tracking-tighter">${pct}</span>
+              <span class="text-primary font-headline font-bold text-xl ml-1">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="absolute -bottom-3 ${pass ? 'bg-correct' : 'bg-wrong'} text-white px-7 py-1.5 rounded-full font-headline font-extrabold text-base shadow-xl ring-4 ring-background">${pass ? '합격' : '불합격'}</div>
+      </div>
+      <div class="space-y-1 mt-4">
+        <p class="text-on-surface-variant text-sm font-medium">${modeLabel} 결과</p>
+        <h2 class="text-xl font-headline font-extrabold text-on-surface">${pass ? '잘 하셨습니다!' : '다음에는 합격할 수 있어요!'}</h2>
+        <p class="text-on-surface-variant text-sm">합격 기준: 60점</p>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-4 mb-10">
+      <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-primary">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+          <span class="text-xs font-bold font-headline uppercase tracking-wider">정답</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span class="text-2xl font-headline font-extrabold text-on-surface">${score}</span>
+          <span class="text-sm text-on-surface-variant font-medium">문제</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-error">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">cancel</span>
+          <span class="text-xs font-bold font-headline uppercase tracking-wider">오답</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span class="text-2xl font-headline font-extrabold text-on-surface">${total - score}</span>
+          <span class="text-sm text-on-surface-variant font-medium">문제</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-secondary">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">analytics</span>
+          <span class="text-xs font-bold font-headline uppercase tracking-wider">정답률</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span class="text-2xl font-headline font-extrabold text-on-surface">${pct}</span>
+          <span class="text-sm text-on-surface-variant font-medium">%</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm border border-outline-variant/10 flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-secondary">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">timer</span>
+          <span class="text-xs font-bold font-headline uppercase tracking-wider">소요시간</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span class="text-2xl font-headline font-extrabold text-on-surface">${min}</span>
+          <span class="text-sm text-on-surface-variant font-medium">분 ${sec}초</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="flex flex-col gap-4">
+      ${wrongCount > 0 ? `<button onclick="reviewWrongFromResult()" class="w-full bg-primary text-on-primary py-5 rounded-full font-headline font-extrabold text-lg shadow-lg shadow-primary/20 active:scale-95 transition-transform flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">menu_book</span>오답 ${wrongCount}문제 복습
+      </button>` : ''}
+      <button onclick="showTab('home');updateHome()" class="w-full bg-primary-fixed text-on-primary-fixed-variant py-5 rounded-full font-headline font-bold text-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">home</span>홈으로
+      </button>
+    </div>`;
   showTab('result');
 }
 
-function reviewWrongFromResult() {
-  startWrongReview();
-}
+function reviewWrongFromResult() { startWrongReview(); }
 
 // ============================================================
 // Wrong Notes
@@ -953,25 +1087,25 @@ function renderWrongNotes() {
   const el = document.getElementById('wrong-list');
 
   if (wrongIds.length === 0) {
-    el.innerHTML = '<div class="empty">오답 문제가 없습니다 👏</div>';
+    el.innerHTML = '<div class="text-center py-12 text-on-surface-variant text-sm">오답 문제가 없습니다 👏</div>';
     return;
   }
 
-  // Sort by wrong count (most wrong first)
   const sorted = wrongIds.sort((a, b) => wrong[b] - wrong[a]);
-
   el.innerHTML = sorted.map(id => {
     const q = QUESTIONS.find(x => x.id === id);
     if (!q) return '';
     const labels = ['가', '나', '다', '라'];
-    return `<div class="wrong-item">
-      <div class="wrong-q">${q.question}</div>
-      <div class="wrong-meta">
-        <span class="tag tag-type" style="font-size:10px">${q.exam_type}</span>
-        <span class="tag tag-year" style="font-size:10px">${q.year}년</span>
-        정답: <strong>${labels[q.answer]}</strong>
-        <span class="wrong-count">× ${wrong[id]}회 오답</span>
-        <span style="cursor:pointer;margin-left:8px" onclick="deleteWrong('${id}')">🗑</span>
+    return `<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/10 shadow-sm mb-3">
+      <div class="text-sm text-on-surface leading-relaxed mb-2">${q.question}</div>
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
+        <span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-semibold">${q.exam_type}</span>
+        <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-semibold">${q.year}년</span>
+        <span class="text-on-surface-variant">정답: <strong>${labels[q.answer]}</strong></span>
+        <span class="text-wrong font-bold">× ${wrong[id]}회</span>
+        <span class="cursor-pointer ml-auto" onclick="deleteWrong('${id}')">
+          <span class="material-symbols-outlined text-[16px] text-on-surface-variant hover:text-wrong">delete</span>
+        </span>
       </div>
     </div>`;
   }).join('');
@@ -993,38 +1127,44 @@ function renderStats() {
   const wrong = load('wrong', {});
   const history = load('history', []);
 
-  // By type
   const types = ['기능장', '산업기사'];
   let detailHtml = '';
 
   types.forEach(type => {
     const pool = QUESTIONS.filter(q => q.exam_type === type);
     const solvedInType = solved.filter(id => pool.some(q => q.id === id));
-    detailHtml += `<div class="stats-row"><span>${type}</span><span>${solvedInType.length} / ${pool.length}</span></div>`;
-  });
-
-  // By year
-  const years = [...new Set(QUESTIONS.map(q => q.year))].sort();
-  years.forEach(y => {
-    const pool = QUESTIONS.filter(q => q.year === y);
-    const solvedInYear = solved.filter(id => pool.some(q => q.id === id));
-    detailHtml += `<div class="stats-row"><span>${y}년</span><span>${solvedInYear.length} / ${pool.length}</span></div>`;
+    const pct = pool.length > 0 ? Math.round(solvedInType.length / pool.length * 100) : 0;
+    detailHtml += `<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/10 shadow-sm">
+      <div class="flex justify-between items-center mb-2">
+        <span class="font-bold text-sm text-on-surface">${type}</span>
+        <span class="font-headline font-bold text-sm text-primary">${pct}%</span>
+      </div>
+      <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+        <div class="h-full bg-primary rounded-full" style="width: ${pct}%;"></div>
+      </div>
+      <div class="text-[11px] text-on-surface-variant mt-1">${solvedInType.length} / ${pool.length} 문제</div>
+    </div>`;
   });
 
   document.getElementById('stats-detail').innerHTML = detailHtml;
 
-  // Exam history
   const examHistory = history.filter(h => h.mode === 'exam').reverse();
   const histEl = document.getElementById('exam-history');
   if (examHistory.length === 0) {
-    histEl.innerHTML = '<div class="empty">모의고사 기록이 없습니다</div>';
+    histEl.innerHTML = '<div class="text-center py-10 text-on-surface-variant text-sm">모의고사 기록이 없습니다</div>';
   } else {
     histEl.innerHTML = examHistory.map(h => {
       const pct = Math.round(h.score / h.total * 100);
       const pass = pct >= 60;
-      return `<div class="history-item">
-        <span>${h.date} — ${h.score}/${h.total}</span>
-        <span class="history-score" style="color:${pass ? 'var(--correct)' : 'var(--wrong)'}">${pct}% ${pass ? '합격' : '불합격'}</span>
+      return `<div class="flex justify-between items-center py-3 border-b border-surface-container-low">
+        <div>
+          <span class="text-[11px] text-on-surface-variant">${h.date}</span>
+          <p class="text-sm font-bold text-on-surface">모의고사 — ${h.score}/${h.total}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-headline font-bold text-sm">${pct}점</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${pass ? 'bg-correct-bg text-correct' : 'bg-wrong-bg text-wrong'}">${pass ? '합격' : '불합격'}</span>
+        </div>
       </div>`;
     }).join('');
   }
@@ -1037,23 +1177,17 @@ function exportData() {
   const data = {};
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key.startsWith('cbt_' + currentUser)) {
-      data[key] = localStorage.getItem(key);
-    }
+    if (key.startsWith('cbt_' + currentUser)) data[key] = localStorage.getItem(key);
   }
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `cbt_${currentUser}_backup.json`;
-  a.click();
+  a.href = url; a.download = `cbt_${currentUser}_backup.json`; a.click();
   URL.revokeObjectURL(url);
   toast('데이터를 내보냈습니다');
 }
 
-function importData() {
-  document.getElementById('import-input').click();
-}
+function importData() { document.getElementById('import-input').click(); }
 
 function handleImport(event) {
   const file = event.target.files[0];
@@ -1062,14 +1196,10 @@ function handleImport(event) {
   reader.onload = (e) => {
     try {
       const data = JSON.parse(e.target.result);
-      Object.entries(data).forEach(([key, val]) => {
-        localStorage.setItem(key, val);
-      });
+      Object.entries(data).forEach(([key, val]) => { localStorage.setItem(key, val); });
       toast('데이터를 가져왔습니다');
       updateHome();
-    } catch {
-      toast('파일 형식이 올바르지 않습니다');
-    }
+    } catch { toast('파일 형식이 올바르지 않습니다'); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -1081,8 +1211,9 @@ function handleImport(event) {
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
+  el.classList.remove('opacity-0');
+  el.classList.add('opacity-100');
+  setTimeout(() => { el.classList.remove('opacity-100'); el.classList.add('opacity-0'); }, 2500);
 }
 
 function showModal(title, msg, buttons) {
@@ -1093,101 +1224,63 @@ function showModal(title, msg, buttons) {
   buttons.forEach(b => {
     const btn = document.createElement('button');
     btn.textContent = b.text;
-    btn.style.background = b.primary ? 'var(--primary)' : 'var(--bg)';
-    btn.style.color = b.primary ? '#fff' : 'var(--text)';
+    btn.className = b.primary
+      ? 'flex-1 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm active:scale-95 transition-all'
+      : 'flex-1 py-3 bg-surface-container-high text-on-surface-variant rounded-xl font-bold text-sm active:scale-95 transition-all';
     btn.onclick = b.action;
     btnsEl.appendChild(btn);
   });
-  document.getElementById('modal').classList.add('show');
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').classList.add('flex');
 }
 
 function hideModal() {
-  document.getElementById('modal').classList.remove('show');
+  document.getElementById('modal').classList.add('hidden');
+  document.getElementById('modal').classList.remove('flex');
 }
 
 // ============================================================
-// Install (홈 화면에 추가)
+// Install
 // ============================================================
 let deferredPrompt = null;
-
-// Android: beforeinstallprompt 이벤트 캡처
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallBanner();
-});
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; showInstallBanner(); });
 
 function showInstallBanner() {
-  // 이미 standalone 모드(설치됨)면 숨기기
   if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) return;
-  // 배너 닫은 적 있으면 숨기기
   if (localStorage.getItem('cbt_install_dismissed')) return;
   document.getElementById('install-banner').style.display = 'flex';
 }
 
 function handleInstall() {
   if (deferredPrompt) {
-    // Android Chrome: 네이티브 설치 프롬프트
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(result => {
-      deferredPrompt = null;
-      document.getElementById('install-banner').style.display = 'none';
-    });
+    deferredPrompt.userChoice.then(result => { deferredPrompt = null; document.getElementById('install-banner').style.display = 'none'; });
   } else {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     const isSafari = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|OPiOS/.test(navigator.userAgent);
-
     if (isIOS && !isSafari) {
-      // 아이폰 크롬/다른 브라우저 → 사파리로 안내
       showModal('Safari에서 열어주세요', '', [
         { text: 'URL 복사하기', primary: true, action: () => { navigator.clipboard.writeText(window.location.href).then(() => toast('URL이 복사되었습니다. Safari에 붙여넣기 하세요!')); hideModal(); } },
         { text: '닫기', action: hideModal }
       ]);
-      document.getElementById('modal-msg').innerHTML =
-        '<div style="text-align:left;line-height:2;font-size:14px">' +
-        '아이폰은 <strong>Safari 브라우저</strong>에서만<br>홈 화면에 추가할 수 있어요.<br><br>' +
-        '<strong>1.</strong> 아래 <strong>"URL 복사하기"</strong> 버튼 누르기<br>' +
-        '<strong>2.</strong> <strong>Safari</strong> 앱 열기<br>' +
-        '<strong>3.</strong> 주소창에 <strong>붙여넣기</strong> 후 접속<br>' +
-        '<strong>4.</strong> 하단 <strong style="font-size:17px">□↑</strong> → <strong>"홈 화면에 추가"</strong>' +
-        '</div>';
+      document.getElementById('modal-msg').innerHTML = '<div style="text-align:left;line-height:2;font-size:14px">아이폰은 <strong>Safari 브라우저</strong>에서만<br>홈 화면에 추가할 수 있어요.<br><br><strong>1.</strong> 아래 <strong>"URL 복사하기"</strong> 버튼 누르기<br><strong>2.</strong> <strong>Safari</strong> 앱 열기<br><strong>3.</strong> 주소창에 <strong>붙여넣기</strong> 후 접속<br><strong>4.</strong> 하단 <strong style="font-size:17px">□↑</strong> → <strong>"홈 화면에 추가"</strong></div>';
     } else if (isIOS && isSafari) {
-      // 아이폰 사파리
-      showModal('홈 화면에 추가하는 방법', '', [
-        { text: '확인했어요', primary: true, action: hideModal }
-      ]);
-      document.getElementById('modal-msg').innerHTML =
-        '<div style="text-align:left;line-height:2.2;font-size:15px">' +
-        '<strong>1.</strong> 화면 하단의 <strong style="font-size:18px">□↑</strong> (공유) 버튼을 누르세요<br>' +
-        '<strong>2.</strong> 목록에서 <strong>"홈 화면에 추가"</strong> 를 찾아 누르세요<br>' +
-        '<strong>3.</strong> 오른쪽 위 <strong>"추가"</strong> 를 누르면 완료!' +
-        '</div>';
+      showModal('홈 화면에 추가하는 방법', '', [{ text: '확인했어요', primary: true, action: hideModal }]);
+      document.getElementById('modal-msg').innerHTML = '<div style="text-align:left;line-height:2.2;font-size:15px"><strong>1.</strong> 화면 하단의 <strong style="font-size:18px">□↑</strong> (공유) 버튼을 누르세요<br><strong>2.</strong> 목록에서 <strong>"홈 화면에 추가"</strong> 를 찾아 누르세요<br><strong>3.</strong> 오른쪽 위 <strong>"추가"</strong> 를 누르면 완료!</div>';
     } else {
-      // 안드로이드 기타 브라우저
-      showModal('홈 화면에 추가하는 방법', '', [
-        { text: '확인했어요', primary: true, action: hideModal }
-      ]);
-      document.getElementById('modal-msg').innerHTML =
-        '<div style="text-align:left;line-height:2.2;font-size:15px">' +
-        '<strong>1.</strong> 오른쪽 위 <strong style="font-size:18px">⋮</strong> (메뉴) 버튼을 누르세요<br>' +
-        '<strong>2.</strong> <strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong> 를 누르세요<br>' +
-        '<strong>3.</strong> <strong>"설치"</strong> 를 누르면 완료!' +
-        '</div>';
+      showModal('홈 화면에 추가하는 방법', '', [{ text: '확인했어요', primary: true, action: hideModal }]);
+      document.getElementById('modal-msg').innerHTML = '<div style="text-align:left;line-height:2.2;font-size:15px"><strong>1.</strong> 오른쪽 위 <strong style="font-size:18px">⋮</strong> (메뉴) 버튼을 누르세요<br><strong>2.</strong> <strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong> 를 누르세요<br><strong>3.</strong> <strong>"설치"</strong> 를 누르면 완료!</div>';
     }
   }
 }
 
-// 페이지 로드 시 iOS면 바로 배너 표시
 window.addEventListener('load', () => {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if (isStandalone) return;
   if (localStorage.getItem('cbt_install_dismissed')) return;
-
   const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const isAndroid = /Android/.test(navigator.userAgent);
-  if (isIOS || isAndroid) {
-    document.getElementById('install-banner').style.display = 'flex';
-  }
+  if (isIOS || isAndroid) document.getElementById('install-banner').style.display = 'flex';
 });
 
 // ============================================================
@@ -1209,6 +1302,9 @@ function updateDday() {
 
   const headerDday = document.getElementById('header-dday');
   if (headerDday) headerDday.textContent = ddayText;
+
+  const homeDday = document.getElementById('home-dday');
+  if (homeDday) homeDday.textContent = ddayText;
 }
 
 // ============================================================

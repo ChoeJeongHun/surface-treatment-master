@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>표면처리 CBT</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="표면처리 CBT">
+<meta name="theme-color" content="#2d5a4e">
+<script src="questions.js"></script>
+<style>
+:root {
+  --primary: #2d5a4e;
+  --primary-light: #e8f4f0;
+  --bg: #f5f5f0;
+  --card: #ffffff;
+  --border: #e5e5e0;
+  --text: #333333;
+  --text-light: #888888;
+  --correct: #27ae60;
+  --correct-bg: #eafaf1;
+  --wrong: #e74c3c;
+  --wrong-bg: #fef5f5;
+  --accent: #e67e22;
+  --accent-bg: #fef3e2;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app { max-width: 520px; margin: 0 auto; background: var(--card); min-height: 100vh; position: relative; padding-bottom: 60px; }
+
+/* Header */
+.header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10; }
+.header h1 { font-size: 17px; font-weight: 700; color: var(--primary); }
+.header-sub { font-size: 11px; color: var(--text-light); font-weight: 400; }
+.header-dday { font-size: 11px; color: var(--wrong); font-weight: 700; }
+.header .user-name { font-size: 13px; color: var(--text-light); cursor: pointer; }
+
+/* Bottom tabs */
+.tabs { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 520px; display: flex; background: var(--card); border-top: 1px solid var(--border); z-index: 10; }
+.tab { flex: 1; text-align: center; padding: 10px 0 8px; font-size: 11px; color: var(--text-light); cursor: pointer; border-top: 2px solid transparent; }
+.tab.active { color: var(--primary); border-top-color: var(--primary); font-weight: 600; }
+.tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+/* Screen visibility */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* User select screen */
+.user-select { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 20px 20px 40px; padding-top: max(20px, env(safe-area-inset-top, 20px)); }
+.user-select h2 { font-size: 22px; color: var(--primary); margin-bottom: 4px; }
+.user-select .subtitle { font-size: 13px; color: var(--text-light); margin-bottom: 6px; }
+.user-select .dday-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; background: var(--wrong); color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
+
+/* Exam schedule table */
+.schedule-table { width: 100%; max-width: 440px; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; }
+.schedule-table th { background: var(--primary); color: #fff; padding: 8px 4px; font-weight: 600; text-align: center; }
+.schedule-table td { padding: 7px 4px; text-align: center; border: 1px solid var(--border); background: var(--card); line-height: 1.4; }
+.schedule-table .schedule-title { background: var(--primary-light); font-weight: 600; color: var(--primary); }
+.select-label { font-size: 14px; color: var(--text-light); margin-bottom: 12px; }
+.user-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; }
+.user-btn { padding: 14px 8px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--card); font-size: 14px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.15s; }
+.user-btn:hover, .user-btn:active { border-color: var(--primary); background: var(--primary-light); }
+
+/* Stats cards */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 20px; }
+.stat-card { background: var(--bg); border-radius: 12px; padding: 14px; text-align: center; }
+.stat-number { font-size: 26px; font-weight: 700; color: var(--primary); }
+.stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+/* Buttons */
+.action-btn { display: block; width: calc(100% - 40px); margin: 0 auto 10px; padding: 15px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-secondary { background: var(--bg); color: var(--primary); border: 1px solid var(--border); }
+.btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 8px; display: inline-block; width: auto; margin: 0; }
+
+/* Section title */
+.section-title { font-size: 13px; font-weight: 600; color: var(--text-light); padding: 16px 20px 8px; }
+
+/* History list */
+.history-list { padding: 0 20px; }
+.history-item { padding: 10px 0; border-bottom: 1px solid var(--bg); font-size: 13px; color: #666; display: flex; justify-content: space-between; }
+.history-score { font-weight: 600; }
+
+/* Quiz header */
+.quiz-header { padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 49px; z-index: 9; }
+.quiz-progress { font-size: 14px; font-weight: 600; }
+.quiz-timer { font-size: 14px; color: var(--wrong); font-weight: 600; }
+.quiz-tags { padding: 10px 20px 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.tag-type { background: var(--primary-light); color: var(--primary); }
+.tag-year { background: var(--accent-bg); color: var(--accent); }
+
+/* Question */
+.question-text { padding: 14px 20px; font-size: 16px; line-height: 1.65; word-break: keep-all; }
+
+/* Choices */
+.choices { padding: 0 20px 16px; }
+.choice { display: flex; align-items: flex-start; padding: 13px 14px; margin-bottom: 8px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 15px; line-height: 1.5; transition: all 0.15s; word-break: keep-all; }
+.choice:active { transform: scale(0.98); }
+.choice.selected { border-color: var(--primary); background: var(--primary-light); }
+.choice.correct { border-color: var(--correct); background: var(--correct-bg); }
+.choice.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+.choice.disabled { pointer-events: none; opacity: 0.6; }
+.choice-label { min-width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--bg); font-size: 12px; font-weight: 600; margin-right: 10px; flex-shrink: 0; }
+
+/* Quiz footer */
+.quiz-footer { padding: 14px 20px; border-top: 1px solid var(--border); position: sticky; bottom: 0; background: var(--card); z-index: 9; }
+.next-btn { width: 100%; padding: 14px; border: none; border-radius: 10px; background: var(--primary); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+.next-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* Result */
+.result-container { padding: 30px 20px; text-align: center; }
+.result-score { font-size: 56px; font-weight: 800; color: var(--primary); }
+.result-label { font-size: 15px; color: var(--text-light); margin-bottom: 6px; }
+.result-pass { display: inline-block; padding: 5px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; margin: 12px 0 20px; }
+.pass { background: var(--correct-bg); color: var(--correct); }
+.fail { background: var(--wrong-bg); color: var(--wrong); }
+.result-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+.detail-num { font-size: 20px; font-weight: 700; }
+.detail-label { font-size: 11px; color: var(--text-light); }
+
+/* Practice setup */
+.practice-setup { padding: 20px; }
+.practice-setup h3 { font-size: 16px; margin-bottom: 16px; }
+.option-group { margin-bottom: 20px; }
+.option-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 8px; }
+.option-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { padding: 10px 18px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; cursor: pointer; background: var(--card); transition: all 0.15s; }
+.pill.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+/* Wrong note list */
+.wrong-list { padding: 0 20px; }
+.wrong-item { padding: 12px 0; border-bottom: 1px solid var(--bg); }
+.wrong-q { font-size: 14px; line-height: 1.5; }
+.wrong-meta { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+.wrong-count { color: var(--wrong); font-weight: 600; }
+
+/* Stats detail */
+.stats-detail { padding: 0 20px; }
+.stats-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--bg); font-size: 14px; }
+
+/* Empty state */
+.empty { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 14px; }
+
+/* Export/Import */
+.data-tools { padding: 20px; display: flex; gap: 10px; }
+
+/* Chapter cards */
+.chapter-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; }
+.chapter-card:hover, .chapter-card:active { border-color: var(--primary); background: var(--primary-light); }
+.chapter-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.chapter-card-title { font-size: 15px; font-weight: 600; }
+.chapter-card-count { font-size: 12px; color: var(--text-light); }
+.chapter-card-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.chapter-card-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.chapter-card-bottom { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); }
+.chapter-card-rate { font-weight: 600; }
+.chapter-weak { display: inline-block; padding: 3px 10px; border-radius: 20px; background: var(--accent-bg); color: var(--accent); font-size: 11px; font-weight: 600; margin-left: 6px; }
+
+/* Toast */
+.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+
+/* Filter select */
+select.filter-select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--card); width: 100%; }
+
+/* Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 50; display: none; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--card); border-radius: 16px; padding: 24px; max-width: 340px; width: 90%; text-align: center; }
+.modal h3 { margin-bottom: 12px; }
+.modal p { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
+.modal-btns { display: flex; gap: 10px; }
+.modal-btns button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- User Select Screen -->
+  <div class="screen active" id="screen-user-select">
+    <div class="user-select">
+      <!-- 홈화면 추가 배너 -->
+      <div id="install-banner" style="display:none;width:100%;max-width:440px;padding:14px 18px;background:#fef8e8;border:1.5px solid #f0dca0;border-radius:14px;margin-bottom:32px;align-items:center;justify-content:space-between;gap:12px">
+        <span style="font-size:15px;color:#333">📲 홈 화면에 추가하면 앱처럼 사용할 수 있어요!</span>
+        <button onclick="handleInstall()" style="padding:10px 20px;border:none;border-radius:10px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">추가</button>
+      </div>
+
+      <h2>표면처리기능장 CBT</h2>
+      <p class="subtitle">모든 응시자의 합격을 기원합니다.</p>
+      <div class="dday-badge" id="dday-badge"></div>
+
+      <table class="schedule-table">
+        <tr>
+          <th>구분</th>
+          <th>필기원서접수<br>(휴일제외)</th>
+          <th>필기시험</th>
+          <th>필기합격<br>발표</th>
+          <th>실기원서접수<br>(휴일제외)</th>
+          <th>실기시험</th>
+          <th>최종합격자<br>발표일</th>
+        </tr>
+        <tr>
+          <td class="schedule-title">2026년 정기<br>기능장 80회</td>
+          <td>06.08<br>~<br>06.11</td>
+          <td><strong>06.27</strong></td>
+          <td>07.15</td>
+          <td>07.27<br>~<br>07.30</td>
+          <td>08.29<br>~<br>09.16</td>
+          <td>10.08</td>
+        </tr>
+      </table>
+
+      <p class="select-label">이름을 선택하세요</p>
+      <div class="user-grid" id="user-grid"></div>
+    </div>
+  </div>
+
+  <!-- Main App (after user select) -->
+  <div class="screen" id="screen-main">
+    <div class="header">
+      <div>
+        <h1>표면처리기능장 CBT</h1>
+        <span class="header-sub">모든 응시자의 합격을 기원합니다.</span>
+        <span class="header-dday" id="header-dday"></span>
+      </div>
+      <span class="user-name" id="header-user" onclick="switchUser()"></span>
+    </div>
+
+    <!-- Home Tab -->
+    <div class="screen active" id="tab-home">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">전체 문제</div></div>
+        <div class="stat-card"><div class="stat-number" id="stat-solved">0</div><div class="stat-label">풀은 문제</div></div>
+        <div class="stat-card"><div class="stat-number" id="stat-rate">0%</div><div class="stat-label">정답률</div></div>
+        <div class="stat-card"><div class="stat-number" id="stat-wrong">0</div><div class="stat-label">오답 문제</div></div>
+      </div>
+      <button class="action-btn btn-primary" onclick="startExam()" style="margin-bottom:0;border-radius:12px 12px 0 0;padding-bottom:8px">📝 실전 모의고사 (60문제/60분)</button>
+      <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.8);background:var(--primary);margin:0 20px 10px;padding:0 12px 10px;border-radius:0 0 12px 12px">※ 실제 시험과 동일하게 이전 문제로 돌아갈 수 없습니다</div>
+      <button class="action-btn btn-secondary" onclick="showPracticeSetup()">📚 연습모드</button>
+      <button class="action-btn btn-secondary" onclick="startWrongReview()">🔄 오답 복습</button>
+
+      <div class="section-title">강별 문제풀이</div>
+      <div id="chapter-cards" style="padding:0 20px 10px"></div>
+      <div class="section-title">최근 학습</div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+
+    <!-- Practice Setup Tab -->
+    <div class="screen" id="tab-practice-setup">
+      <div class="practice-setup">
+        <h3>📚 연습모드 설정</h3>
+        <div class="option-group">
+          <label>문제 수</label>
+          <div class="option-pills" id="count-pills">
+            <div class="pill active" data-count="5">5문제</div>
+            <div class="pill" data-count="10">10문제</div>
+            <div class="pill" data-count="20">20문제</div>
+          </div>
+        </div>
+        <div class="option-group">
+          <label>출제 범위</label>
+          <div class="option-pills" id="chapter-pills">
+            <div class="pill active" data-chapter="all">전체</div>
+            <div class="pill" data-chapter="기출">기출문제</div>
+            <div class="pill" data-chapter="1장">1장 표면처리의 기초</div>
+            <div class="pill" data-chapter="2장">2장 전기화학</div>
+            <div class="pill" data-chapter="3장">3장 전기도금</div>
+            <div class="pill" data-chapter="4장">4장 특수도금</div>
+            <div class="pill" data-chapter="5장">5장 표면검사·도금액 관리</div>
+            <div class="pill" data-chapter="6장">6장 안전관리</div>
+            <div class="pill" data-chapter="7장">7장 금속재료</div>
+          </div>
+          <div id="chapter-desc" style="font-size:11px;color:var(--text-light);margin-top:6px"></div>
+        </div>
+        <div class="option-group" id="year-group">
+          <label>연도</label>
+          <select class="filter-select" id="year-filter">
+            <option value="all">전체 연도</option>
+          </select>
+        </div>
+        <button class="action-btn btn-primary" onclick="startPractice()" style="margin-top:10px">연습 시작</button>
+        <button class="action-btn btn-secondary" onclick="showTab('home')">← 돌아가기</button>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="screen" id="tab-quiz">
+      <div class="quiz-header">
+        <span class="quiz-progress" id="quiz-progress">1 / 10</span>
+        <span class="quiz-timer" id="quiz-timer"></span>
+      </div>
+      <div class="quiz-tags" id="quiz-tags"></div>
+      <div class="question-text" id="quiz-question"></div>
+      <div class="choices" id="quiz-choices"></div>
+      <div class="quiz-footer">
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>다음 문제 →</button>
+        <button onclick="quitQuiz()" style="width:100%;padding:10px;border:none;background:none;color:var(--text-light);font-size:13px;cursor:pointer;margin-top:6px">🏠 홈으로</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="screen" id="tab-result">
+      <div class="result-container" id="result-container"></div>
+    </div>
+
+    <!-- Wrong Notes Tab -->
+    <div class="screen" id="tab-wrong">
+      <div class="section-title">오답노트</div>
+      <div class="wrong-list" id="wrong-list"></div>
+    </div>
+
+    <!-- Stats Tab -->
+    <div class="screen" id="tab-stats">
+      <div class="section-title">학습 통계</div>
+      <div class="stats-detail" id="stats-detail"></div>
+      <div class="section-title">모의고사 이력</div>
+      <div class="history-list" id="exam-history"></div>
+      <div class="section-title">데이터 관리</div>
+      <div class="data-tools">
+        <button class="btn-sm btn-secondary" onclick="exportData()">📤 내보내기</button>
+        <button class="btn-sm btn-secondary" onclick="importData()">📥 가져오기</button>
+      </div>
+    </div>
+
+    <!-- Bottom Tabs -->
+    <div class="tabs" id="bottom-tabs">
+      <div class="tab active" onclick="showTab('home')"><span class="tab-icon">🏠</span>홈</div>
+      <div class="tab" onclick="showPracticeSetup()"><span class="tab-icon">📚</span>연습</div>
+      <div class="tab" onclick="showTab('wrong');renderWrongNotes()"><span class="tab-icon">❌</span>오답</div>
+      <div class="tab" onclick="showTab('stats');renderStats()"><span class="tab-icon">📊</span>통계</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <p id="modal-msg"></p>
+    <div class="modal-btns" id="modal-btns"></div>
+  </div>
+</div>
+
+<!-- Hidden file input for import -->
+<input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<script>
+// ============================================================
+// State
+// ============================================================
+let currentUser = null;
+let quiz = { questions: [], current: 0, answers: [], mode: '', timer: null, startTime: 0, timeLimit: 0 };
+
+// ============================================================
+// Storage helpers
+// ============================================================
+function getKey(key) { return `cbt_${currentUser}_${key}`; }
+function load(key, def) { try { return JSON.parse(localStorage.getItem(getKey(key))) || def; } catch { return def; } }
+function save(key, val) { localStorage.setItem(getKey(key), JSON.stringify(val)); }
+
+// ============================================================
+// User Selection
+// ============================================================
+function initUserSelect() {
+  const grid = document.getElementById('user-grid');
+  grid.innerHTML = '';
+  USERS.forEach(name => {
+    const btn = document.createElement('div');
+    btn.className = 'user-btn';
+    btn.textContent = name;
+    btn.onclick = () => selectUser(name);
+    grid.appendChild(btn);
+  });
+
+  // Check saved session
+  const saved = localStorage.getItem('cbt_session');
+  if (saved && USERS.includes(saved)) {
+    selectUser(saved);
+  }
+}
+
+function selectUser(name) {
+  currentUser = name;
+  localStorage.setItem('cbt_session', name);
+  document.getElementById('header-user').textContent = name + ' ▼';
+  document.getElementById('screen-user-select').classList.remove('active');
+  document.getElementById('screen-main').classList.add('active');
+
+  // Check for interrupted quiz
+  const quizState = load('quiz_state', null);
+  if (quizState) {
+    showModal('이어서 풀기', '진행 중인 시험이 있습니다. 이어서 풀까요?', [
+      { text: '이어서 풀기', primary: true, action: () => { resumeQuiz(quizState); hideModal(); } },
+      { text: '새로 시작', action: () => { save('quiz_state', null); hideModal(); updateHome(); } }
+    ]);
+  }
+  updateHome();
+  populateYearFilter();
+}
+
+function switchUser() {
+  if (quiz.timer) clearInterval(quiz.timer);
+  currentUser = null;
+  localStorage.removeItem('cbt_session');
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-user-select').classList.add('active');
+  showTab('home');
+}
+
+// ============================================================
+// Home
+// ============================================================
+function updateHome() {
+  const solved = load('solved', []);
+  const wrong = load('wrong', {});
+  const history = load('history', []);
+
+  let correctCount = 0;
+  let totalAttempts = 0;
+  history.forEach(h => { correctCount += h.score; totalAttempts += h.total; });
+
+  document.getElementById('stat-total').textContent = QUESTIONS.length.toLocaleString();
+  document.getElementById('stat-solved').textContent = solved.length.toLocaleString();
+  document.getElementById('stat-rate').textContent = totalAttempts > 0 ? Math.round(correctCount / totalAttempts * 100) + '%' : '0%';
+  document.getElementById('stat-wrong').textContent = Object.keys(wrong).length.toLocaleString();
+
+  // Chapter cards
+  renderChapterCards();
+
+  // History
+  const histEl = document.getElementById('history-list');
+  const recent = history.slice(-5).reverse();
+  if (recent.length === 0) {
+    histEl.innerHTML = '<div class="empty">아직 학습 기록이 없습니다</div>';
+  } else {
+    histEl.innerHTML = recent.map(h => {
+      const pct = Math.round(h.score / h.total * 100);
+      const pass = pct >= 60;
+      const mode = h.mode === 'exam' ? '모의고사' : h.mode === 'practice' ? '연습' : '오답복습';
+      return `<div class="history-item">
+        <span>${h.date} ${mode} — ${h.total}문제</span>
+        <span class="history-score" style="color:${pass ? 'var(--correct)' : 'var(--wrong)'}">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ============================================================
+// Tab navigation
+// ============================================================
+function showTab(name) {
+  // Hide all tabs
+  ['home', 'practice-setup', 'quiz', 'result', 'wrong', 'stats'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById('tab-' + name).classList.add('active');
+
+  // Update bottom tab highlight
+  const tabs = document.querySelectorAll('#bottom-tabs .tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  const tabMap = { home: 0, 'practice-setup': 1, wrong: 2, stats: 3 };
+  if (tabMap[name] !== undefined) tabs[tabMap[name]].classList.add('active');
+
+  // Show/hide bottom tabs during quiz
+  document.getElementById('bottom-tabs').style.display = (name === 'quiz' || name === 'result') ? 'none' : 'flex';
+}
+
+// ============================================================
+// Chapter Cards (강별 문제풀이)
+// ============================================================
+const CHAPTER_INFO = {
+  '기출': { name: '기출문제', desc: '기능장/산업기사 기출문제', icon: '📝' },
+  '1장': { name: '1장 표면처리의 기초', desc: '도금 기초지식·탈지·연마·전처리', icon: '🔧' },
+  '2장': { name: '2장 전기화학', desc: '전기화학 기초·전기분해·전극반응', icon: '⚡' },
+  '3장': { name: '3장 전기도금', desc: '구리·니켈·크롬·아연·귀금속 도금', icon: '🔩' },
+  '4장': { name: '4장 특수도금', desc: '화성처리·무전해도금·용융도금·건식도금', icon: '🧪' },
+  '5장': { name: '5장 표면검사·도금액 관리', desc: '품질검사·도금액 분석·밀착성', icon: '🔬' },
+  '6장': { name: '6장 안전관리', desc: '산업안전·약품취급·자동생산시스템', icon: '⚠️' },
+  '7장': { name: '7장 금속재료', desc: '금속조직·열처리·합금·비철금속', icon: '🔗' }
+};
+
+function getChapterStats() {
+  const history = load('history', []);
+  const chapterHistory = {};
+
+  // history에서 강별 통계 집계
+  history.forEach(h => {
+    if (h.chapter) {
+      if (!chapterHistory[h.chapter]) chapterHistory[h.chapter] = { score: 0, total: 0 };
+      chapterHistory[h.chapter].score += h.score;
+      chapterHistory[h.chapter].total += h.total;
+    }
+  });
+
+  // 강별 문제 수 + 풀이 현황
+  const solved = new Set(load('solved', []));
+  const chapters = {};
+
+  QUESTIONS.forEach(q => {
+    const ch = q.chapter || '기출';
+    if (!chapters[ch]) chapters[ch] = { total: 0, solved: 0 };
+    chapters[ch].total++;
+    if (solved.has(q.id)) chapters[ch].solved++;
+  });
+
+  return { chapters, chapterHistory };
+}
+
+function renderChapterCards() {
+  const { chapters, chapterHistory } = getChapterStats();
+  const el = document.getElementById('chapter-cards');
+
+  // 취약 강 찾기: 정답률이 가장 낮은 교재 강
+  let weakest = null;
+  let weakestRate = 100;
+  Object.entries(chapterHistory).forEach(([ch, stat]) => {
+    if (ch !== '기출' && stat.total >= 5) {
+      const rate = Math.round(stat.score / stat.total * 100);
+      if (rate < weakestRate) { weakestRate = rate; weakest = ch; }
+    }
+  });
+
+  // 랜덤 풀이 카드 (맨 위)
+  const totalTextbook = QUESTIONS.filter(q => q.source === '교재').length;
+  el.innerHTML = `<div class="chapter-card" onclick="startChapterQuiz('랜덤')" style="border-color:var(--primary);background:var(--primary-light)">
+    <div class="chapter-card-top">
+      <span class="chapter-card-title">🎲 각 장의 랜덤 풀이</span>
+      <span class="chapter-card-count">${totalTextbook}문제</span>
+    </div>
+    <div class="chapter-card-bottom">
+      <span>1~7장 전체에서 랜덤 출제</span>
+    </div>
+  </div>`;
+
+  const order = ['1장', '2장', '3장', '4장', '5장', '6장', '7장', '기출'];
+  el.innerHTML += order.map(ch => {
+    const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: '📖' };
+    const stat = chapters[ch] || { total: 0, solved: 0 };
+    const hist = chapterHistory[ch] || { score: 0, total: 0 };
+    const progress = stat.total > 0 ? Math.round(stat.solved / stat.total * 100) : 0;
+    const rate = hist.total > 0 ? Math.round(hist.score / hist.total * 100) : -1;
+    const rateColor = rate >= 60 ? 'var(--correct)' : rate >= 0 ? 'var(--wrong)' : 'var(--text-light)';
+    const isWeak = ch === weakest;
+    const barColor = rate >= 60 ? 'var(--correct)' : rate >= 0 ? 'var(--accent)' : 'var(--primary)';
+
+    return `<div class="chapter-card" onclick="startChapterQuiz('${ch}')">
+      <div class="chapter-card-top">
+        <span class="chapter-card-title">${info.icon} ${info.name}${isWeak ? '<span class="chapter-weak">취약</span>' : ''}</span>
+        <span class="chapter-card-count">${stat.total}문제</span>
+      </div>
+      <div class="chapter-card-bar"><div class="chapter-card-fill" style="width:${progress}%;background:${barColor}"></div></div>
+      <div class="chapter-card-bottom">
+        <span>진행률 ${progress}% (${stat.solved}/${stat.total})</span>
+        <span class="chapter-card-rate" style="color:${rateColor}">${rate >= 0 ? '정답률 ' + rate + '%' : '미학습'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 취약 강 제안
+  if (weakest && weakestRate < 60) {
+    el.innerHTML += `<div style="padding:10px 14px;background:var(--accent-bg);border-radius:10px;font-size:13px;color:var(--accent);margin-top:4px">
+      💡 <strong>${CHAPTER_INFO[weakest]?.name || weakest}</strong>의 정답률이 ${weakestRate}%로 가장 낮습니다. 집중 학습을 추천합니다!
+    </div>`;
+  }
+}
+
+function startChapterQuiz(chapter) {
+  let pool;
+  if (chapter === '랜덤') {
+    pool = QUESTIONS.filter(q => q.source === '교재');
+  } else {
+    pool = QUESTIONS.filter(q => (q.chapter || '기출') === chapter);
+  }
+  if (pool.length === 0) { toast('해당 강의 문제가 없습니다'); return; }
+
+  const unsolved = getUnsolvedQuestions(pool);
+  const shuffled = shuffleArray(unsolved);
+  const selected = shuffled.slice(0, Math.min(20, shuffled.length));
+
+  // 강별 모드로 시작
+  quiz.chapterMode = chapter;
+  startQuiz(selected, 'chapter', 0);
+}
+
+// ============================================================
+// Practice Setup
+// ============================================================
+function showPracticeSetup() {
+  showTab('practice-setup');
+
+  // Pill click handlers
+  document.querySelectorAll('#count-pills .pill').forEach(p => {
+    p.onclick = () => {
+      document.querySelectorAll('#count-pills .pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    };
+  });
+  document.querySelectorAll('#chapter-pills .pill').forEach(p => {
+    p.onclick = () => {
+      document.querySelectorAll('#chapter-pills .pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      const ch = p.dataset.chapter;
+      const desc = document.getElementById('chapter-desc');
+      const yearGroup = document.getElementById('year-group');
+      if (ch === 'all') { desc.textContent = ''; yearGroup.style.display = ''; }
+      else if (ch === '기출') { desc.textContent = '기능장/산업기사 기출문제'; yearGroup.style.display = ''; }
+      else { desc.textContent = CHAPTER_INFO[ch]?.desc || ''; yearGroup.style.display = 'none'; }
+    };
+  });
+}
+
+function populateYearFilter() {
+  const years = [...new Set(QUESTIONS.map(q => q.year))].sort();
+  const sel = document.getElementById('year-filter');
+  sel.innerHTML = '<option value="all">전체 연도</option>';
+  years.forEach(y => {
+    sel.innerHTML += `<option value="${y}">${y}년</option>`;
+  });
+}
+
+// ============================================================
+// Quiz Engine
+// ============================================================
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getUnsolvedQuestions(pool) {
+  const solved = new Set(load('solved', []));
+  let unsolved = pool.filter(q => !solved.has(q.id));
+
+  // All solved? Reset!
+  if (unsolved.length === 0) {
+    save('solved', []);
+    toast('모든 문제를 풀었습니다! 다시 처음부터 시작합니다.');
+    unsolved = [...pool];
+  }
+  return unsolved;
+}
+
+function startExam() {
+  const pool = shuffleArray(QUESTIONS);
+  const selected = pool.slice(0, 60);
+  startQuiz(selected, 'exam', 60 * 60);
+}
+
+function startPractice() {
+  const count = parseInt(document.querySelector('#count-pills .pill.active').dataset.count);
+  const chapter = document.querySelector('#chapter-pills .pill.active').dataset.chapter;
+  const year = document.getElementById('year-filter').value;
+
+  let pool = [...QUESTIONS];
+  if (chapter !== 'all') pool = pool.filter(q => (q.chapter || '기출') === chapter);
+  if (year !== 'all') pool = pool.filter(q => q.year === year);
+
+  if (pool.length === 0) { toast('해당 조건의 문제가 없습니다'); return; }
+
+  const unsolved = getUnsolvedQuestions(pool);
+  const shuffled = shuffleArray(unsolved);
+  const selected = shuffled.slice(0, Math.min(count, shuffled.length));
+
+  quiz.chapterMode = chapter;
+  startQuiz(selected, 'practice', 0);
+}
+
+function startWrongReview() {
+  const wrong = load('wrong', {});
+  const wrongIds = Object.keys(wrong);
+  if (wrongIds.length === 0) { toast('오답 문제가 없습니다'); return; }
+
+  const pool = QUESTIONS.filter(q => wrongIds.includes(q.id));
+  const selected = shuffleArray(pool).slice(0, Math.min(20, pool.length));
+  startQuiz(selected, 'wrong_review', 0);
+}
+
+function startQuiz(questions, mode, timeLimit) {
+  // Shuffle choices for each question
+  quiz.questions = questions.map(q => {
+    const indices = [0, 1, 2, 3];
+    const shuffled = shuffleArray(indices);
+    return {
+      ...q,
+      shuffledChoices: shuffled.map(i => q.choices[i]),
+      shuffledAnswer: shuffled.indexOf(q.answer),
+      originalAnswer: q.answer
+    };
+  });
+
+  quiz.current = 0;
+  quiz.answers = new Array(questions.length).fill(null);
+  quiz.mode = mode;
+  quiz.startTime = Date.now();
+  quiz.timeLimit = timeLimit;
+
+  showTab('quiz');
+  renderQuestion();
+
+  // Timer
+  if (quiz.timer) clearInterval(quiz.timer);
+  if (timeLimit > 0) {
+    quiz.timer = setInterval(updateTimer, 1000);
+    updateTimer();
+  } else {
+    document.getElementById('quiz-timer').textContent = '';
+  }
+
+  saveQuizState();
+}
+
+function resumeQuiz(state) {
+  quiz = { ...state, timer: null };
+  showTab('quiz');
+  renderQuestion();
+
+  if (quiz.timeLimit > 0) {
+    quiz.timer = setInterval(updateTimer, 1000);
+    updateTimer();
+  }
+}
+
+function saveQuizState() {
+  save('quiz_state', {
+    questions: quiz.questions,
+    current: quiz.current,
+    answers: quiz.answers,
+    mode: quiz.mode,
+    startTime: quiz.startTime,
+    timeLimit: quiz.timeLimit
+  });
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - quiz.startTime) / 1000);
+  const remaining = quiz.timeLimit - elapsed;
+
+  if (remaining <= 0) {
+    clearInterval(quiz.timer);
+    toast('시간 종료! 자동 제출합니다.');
+    finishQuiz();
+    return;
+  }
+
+  const min = Math.floor(remaining / 60);
+  const sec = remaining % 60;
+  document.getElementById('quiz-timer').textContent = `⏱ ${min}:${sec.toString().padStart(2, '0')}`;
+  document.getElementById('quiz-timer').style.color = remaining < 300 ? 'var(--wrong)' : 'var(--text-light)';
+}
+
+function renderQuestion() {
+  const q = quiz.questions[quiz.current];
+  const labels = ['가', '나', '다', '라'];
+
+  document.getElementById('quiz-progress').textContent = `${quiz.current + 1} / ${quiz.questions.length}`;
+
+  // Tags
+  const chapterLabel = q.chapter_name ? `${q.chapter} ${q.chapter_name}` : q.chapter;
+  const chapterTag = q.chapter && q.chapter !== '기출' ? `<span class="tag tag-type">${chapterLabel}</span>` : '';
+  const typeTag = q.exam_type !== '교재' ? `<span class="tag tag-type">${q.exam_type}</span>` : '';
+  const yearTag = q.year !== '교재' ? `<span class="tag tag-year">${q.year}년</span>` : '';
+  document.getElementById('quiz-tags').innerHTML = `${chapterTag}${typeTag}${yearTag}`;
+
+  // Question
+  document.getElementById('quiz-question').textContent = q.question;
+
+  // Choices
+  const choicesEl = document.getElementById('quiz-choices');
+  choicesEl.innerHTML = '';
+  q.shuffledChoices.forEach((choice, i) => {
+    const div = document.createElement('div');
+    div.className = 'choice';
+    div.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice}</span>`;
+    div.onclick = () => selectChoice(i);
+    choicesEl.appendChild(div);
+  });
+
+  // Restore previous answer if exists
+  if (quiz.answers[quiz.current] !== null) {
+    showAnswerResult(quiz.answers[quiz.current]);
+  }
+
+  // Next button
+  const isLast = quiz.current >= quiz.questions.length - 1;
+  const btn = document.getElementById('next-btn');
+  btn.textContent = isLast ? '결과 보기' : '다음 문제 →';
+  btn.disabled = quiz.answers[quiz.current] === null;
+
+  window.scrollTo(0, 0);
+}
+
+function selectChoice(index) {
+  if (quiz.answers[quiz.current] !== null) return; // Already answered
+
+  quiz.answers[quiz.current] = index;
+  document.getElementById('next-btn').disabled = false;
+
+  if (quiz.mode === 'practice' || quiz.mode === 'wrong_review' || quiz.mode === 'chapter') {
+    showAnswerResult(index);
+  } else {
+    // Exam mode: just highlight selection
+    document.querySelectorAll('.choice').forEach((c, i) => {
+      c.classList.toggle('selected', i === index);
+    });
+  }
+
+  saveQuizState();
+}
+
+function showAnswerResult(selected) {
+  const q = quiz.questions[quiz.current];
+  const correct = q.shuffledAnswer;
+
+  document.querySelectorAll('.choice').forEach((c, i) => {
+    c.classList.add('disabled');
+    const textSpan = c.querySelector('span:last-child');
+    if (i === correct) {
+      c.classList.add('correct');
+      c.querySelector('.choice-label').style.background = 'var(--correct)';
+      c.querySelector('.choice-label').style.color = '#fff';
+      textSpan.innerHTML += ' <strong style="color:var(--correct);margin-left:6px">✓ 정답</strong>';
+    }
+    if (i === selected && selected !== correct) {
+      c.classList.add('wrong');
+      c.querySelector('.choice-label').style.background = 'var(--wrong)';
+      c.querySelector('.choice-label').style.color = '#fff';
+      textSpan.innerHTML += ' <strong style="color:var(--wrong);margin-left:6px">✗ 오답</strong>';
+    }
+  });
+
+  // 해설 표시
+  if (q.explanation) {
+    const expEl = document.createElement('div');
+    expEl.style.cssText = 'padding:12px 16px;margin:0 0 8px;background:var(--primary-light);border-radius:10px;font-size:13px;line-height:1.6;color:var(--text)';
+    expEl.innerHTML = `<strong style="color:var(--primary)">💡 해설</strong><br>${q.explanation}`;
+    document.getElementById('quiz-choices').appendChild(expEl);
+  }
+}
+
+function nextQuestion() {
+  if (quiz.current >= quiz.questions.length - 1) {
+    finishQuiz();
+    return;
+  }
+  quiz.current++;
+  renderQuestion();
+  saveQuizState();
+}
+
+function quitQuiz() {
+  showModal('홈으로 돌아가기', '진행 중인 문제풀이를 종료하시겠습니까?', [
+    { text: '종료', primary: true, action: () => { if (quiz.timer) clearInterval(quiz.timer); save('quiz_state', null); hideModal(); showTab('home'); updateHome(); } },
+    { text: '계속 풀기', action: () => hideModal() }
+  ]);
+}
+
+function finishQuiz() {
+  if (quiz.timer) clearInterval(quiz.timer);
+  save('quiz_state', null);
+
+  // Calculate results
+  let score = 0;
+  const wrongIds = {};
+  const solved = load('solved', []);
+  const existingWrong = load('wrong', {});
+
+  quiz.questions.forEach((q, i) => {
+    const userAnswer = quiz.answers[i];
+    const isCorrect = userAnswer === q.shuffledAnswer;
+
+    if (!solved.includes(q.id)) solved.push(q.id);
+
+    if (isCorrect) {
+      score++;
+      // Remove from wrong if previously wrong
+      if (existingWrong[q.id]) delete existingWrong[q.id];
+    } else {
+      existingWrong[q.id] = (existingWrong[q.id] || 0) + 1;
+      wrongIds[q.id] = true;
+    }
+  });
+
+  save('solved', solved);
+  save('wrong', existingWrong);
+
+  // Save history
+  const history = load('history', []);
+  const elapsed = Math.floor((Date.now() - quiz.startTime) / 1000);
+  history.push({
+    date: new Date().toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
+    mode: quiz.mode,
+    score: score,
+    total: quiz.questions.length,
+    time: elapsed,
+    chapter: quiz.chapterMode || 'all'
+  });
+  save('history', history);
+
+  // Show result
+  showResult(score, quiz.questions.length, elapsed, Object.keys(wrongIds).length);
+}
+
+function showResult(score, total, elapsed, wrongCount) {
+  const pct = Math.round(score / total * 100);
+  const pass = pct >= 60;
+  const min = Math.floor(elapsed / 60);
+  const sec = elapsed % 60;
+
+  const container = document.getElementById('result-container');
+  container.innerHTML = `
+    <div class="result-label">${quiz.mode === 'exam' ? '모의고사' : quiz.mode === 'chapter' ? (CHAPTER_INFO[quiz.chapterMode]?.name || quiz.chapterMode) : quiz.mode === 'practice' ? '연습' : '오답복습'} 결과</div>
+    <div class="result-score">${pct}%</div>
+    <div class="result-pass ${pass ? 'pass' : 'fail'}">${pass ? '합격 (60점 이상)' : '불합격 (60점 미만)'}</div>
+    <div class="result-details">
+      <div><div class="detail-num" style="color:var(--correct)">${score}</div><div class="detail-label">정답</div></div>
+      <div><div class="detail-num" style="color:var(--wrong)">${total - score}</div><div class="detail-label">오답</div></div>
+      <div><div class="detail-num">${min}:${sec.toString().padStart(2, '0')}</div><div class="detail-label">소요시간</div></div>
+    </div>
+    ${wrongCount > 0 ? `<button class="action-btn btn-primary" onclick="reviewWrongFromResult()" style="margin-top:20px">❌ 오답 ${wrongCount}문제 복습</button>` : ''}
+    <button class="action-btn btn-secondary" onclick="showTab('home');updateHome()" style="margin-top:${wrongCount > 0 ? '0' : '20px'}">🏠 홈으로</button>
+  `;
+  showTab('result');
+}
+
+function reviewWrongFromResult() {
+  startWrongReview();
+}
+
+// ============================================================
+// Wrong Notes
+// ============================================================
+function renderWrongNotes() {
+  const wrong = load('wrong', {});
+  const wrongIds = Object.keys(wrong);
+  const el = document.getElementById('wrong-list');
+
+  if (wrongIds.length === 0) {
+    el.innerHTML = '<div class="empty">오답 문제가 없습니다 👏</div>';
+    return;
+  }
+
+  // Sort by wrong count (most wrong first)
+  const sorted = wrongIds.sort((a, b) => wrong[b] - wrong[a]);
+
+  el.innerHTML = sorted.map(id => {
+    const q = QUESTIONS.find(x => x.id === id);
+    if (!q) return '';
+    const labels = ['가', '나', '다', '라'];
+    return `<div class="wrong-item">
+      <div class="wrong-q">${q.question}</div>
+      <div class="wrong-meta">
+        <span class="tag tag-type" style="font-size:10px">${q.exam_type}</span>
+        <span class="tag tag-year" style="font-size:10px">${q.year}년</span>
+        정답: <strong>${labels[q.answer]}</strong>
+        <span class="wrong-count">× ${wrong[id]}회 오답</span>
+        <span style="cursor:pointer;margin-left:8px" onclick="deleteWrong('${id}')">🗑</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteWrong(id) {
+  const wrong = load('wrong', {});
+  delete wrong[id];
+  save('wrong', wrong);
+  renderWrongNotes();
+  toast('오답에서 삭제했습니다');
+}
+
+// ============================================================
+// Stats
+// ============================================================
+function renderStats() {
+  const solved = load('solved', []);
+  const wrong = load('wrong', {});
+  const history = load('history', []);
+
+  // By type
+  const types = ['기능장', '산업기사'];
+  let detailHtml = '';
+
+  types.forEach(type => {
+    const pool = QUESTIONS.filter(q => q.exam_type === type);
+    const solvedInType = solved.filter(id => pool.some(q => q.id === id));
+    detailHtml += `<div class="stats-row"><span>${type}</span><span>${solvedInType.length} / ${pool.length}</span></div>`;
+  });
+
+  // By year
+  const years = [...new Set(QUESTIONS.map(q => q.year))].sort();
+  years.forEach(y => {
+    const pool = QUESTIONS.filter(q => q.year === y);
+    const solvedInYear = solved.filter(id => pool.some(q => q.id === id));
+    detailHtml += `<div class="stats-row"><span>${y}년</span><span>${solvedInYear.length} / ${pool.length}</span></div>`;
+  });
+
+  document.getElementById('stats-detail').innerHTML = detailHtml;
+
+  // Exam history
+  const examHistory = history.filter(h => h.mode === 'exam').reverse();
+  const histEl = document.getElementById('exam-history');
+  if (examHistory.length === 0) {
+    histEl.innerHTML = '<div class="empty">모의고사 기록이 없습니다</div>';
+  } else {
+    histEl.innerHTML = examHistory.map(h => {
+      const pct = Math.round(h.score / h.total * 100);
+      const pass = pct >= 60;
+      return `<div class="history-item">
+        <span>${h.date} — ${h.score}/${h.total}</span>
+        <span class="history-score" style="color:${pass ? 'var(--correct)' : 'var(--wrong)'}">${pct}% ${pass ? '합격' : '불합격'}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ============================================================
+// Data Export / Import
+// ============================================================
+function exportData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('cbt_' + currentUser)) {
+      data[key] = localStorage.getItem(key);
+    }
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cbt_${currentUser}_backup.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('데이터를 내보냈습니다');
+}
+
+function importData() {
+  document.getElementById('import-input').click();
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      Object.entries(data).forEach(([key, val]) => {
+        localStorage.setItem(key, val);
+      });
+      toast('데이터를 가져왔습니다');
+      updateHome();
+    } catch {
+      toast('파일 형식이 올바르지 않습니다');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ============================================================
+// Utilities
+// ============================================================
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function showModal(title, msg, buttons) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-msg').textContent = msg;
+  const btnsEl = document.getElementById('modal-btns');
+  btnsEl.innerHTML = '';
+  buttons.forEach(b => {
+    const btn = document.createElement('button');
+    btn.textContent = b.text;
+    btn.style.background = b.primary ? 'var(--primary)' : 'var(--bg)';
+    btn.style.color = b.primary ? '#fff' : 'var(--text)';
+    btn.onclick = b.action;
+    btnsEl.appendChild(btn);
+  });
+  document.getElementById('modal').classList.add('show');
+}
+
+function hideModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+// ============================================================
+// Install (홈 화면에 추가)
+// ============================================================
+let deferredPrompt = null;
+
+// Android: beforeinstallprompt 이벤트 캡처
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  // 이미 standalone 모드(설치됨)면 숨기기
+  if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) return;
+  // 배너 닫은 적 있으면 숨기기
+  if (localStorage.getItem('cbt_install_dismissed')) return;
+  document.getElementById('install-banner').style.display = 'flex';
+}
+
+function handleInstall() {
+  if (deferredPrompt) {
+    // Android Chrome: 네이티브 설치 프롬프트
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(result => {
+      deferredPrompt = null;
+      document.getElementById('install-banner').style.display = 'none';
+    });
+  } else {
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isSafari = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|OPiOS/.test(navigator.userAgent);
+
+    if (isIOS && !isSafari) {
+      // 아이폰 크롬/다른 브라우저 → 사파리로 안내
+      showModal('Safari에서 열어주세요', '', [
+        { text: 'URL 복사하기', primary: true, action: () => { navigator.clipboard.writeText(window.location.href).then(() => toast('URL이 복사되었습니다. Safari에 붙여넣기 하세요!')); hideModal(); } },
+        { text: '닫기', action: hideModal }
+      ]);
+      document.getElementById('modal-msg').innerHTML =
+        '<div style="text-align:left;line-height:2;font-size:14px">' +
+        '아이폰은 <strong>Safari 브라우저</strong>에서만<br>홈 화면에 추가할 수 있어요.<br><br>' +
+        '<strong>1.</strong> 아래 <strong>"URL 복사하기"</strong> 버튼 누르기<br>' +
+        '<strong>2.</strong> <strong>Safari</strong> 앱 열기<br>' +
+        '<strong>3.</strong> 주소창에 <strong>붙여넣기</strong> 후 접속<br>' +
+        '<strong>4.</strong> 하단 <strong style="font-size:17px">□↑</strong> → <strong>"홈 화면에 추가"</strong>' +
+        '</div>';
+    } else if (isIOS && isSafari) {
+      // 아이폰 사파리
+      showModal('홈 화면에 추가하는 방법', '', [
+        { text: '확인했어요', primary: true, action: hideModal }
+      ]);
+      document.getElementById('modal-msg').innerHTML =
+        '<div style="text-align:left;line-height:2.2;font-size:15px">' +
+        '<strong>1.</strong> 화면 하단의 <strong style="font-size:18px">□↑</strong> (공유) 버튼을 누르세요<br>' +
+        '<strong>2.</strong> 목록에서 <strong>"홈 화면에 추가"</strong> 를 찾아 누르세요<br>' +
+        '<strong>3.</strong> 오른쪽 위 <strong>"추가"</strong> 를 누르면 완료!' +
+        '</div>';
+    } else {
+      // 안드로이드 기타 브라우저
+      showModal('홈 화면에 추가하는 방법', '', [
+        { text: '확인했어요', primary: true, action: hideModal }
+      ]);
+      document.getElementById('modal-msg').innerHTML =
+        '<div style="text-align:left;line-height:2.2;font-size:15px">' +
+        '<strong>1.</strong> 오른쪽 위 <strong style="font-size:18px">⋮</strong> (메뉴) 버튼을 누르세요<br>' +
+        '<strong>2.</strong> <strong>"홈 화면에 추가"</strong> 또는 <strong>"앱 설치"</strong> 를 누르세요<br>' +
+        '<strong>3.</strong> <strong>"설치"</strong> 를 누르면 완료!' +
+        '</div>';
+    }
+  }
+}
+
+// 페이지 로드 시 iOS면 바로 배너 표시
+window.addEventListener('load', () => {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (isStandalone) return;
+  if (localStorage.getItem('cbt_install_dismissed')) return;
+
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+  if (isIOS || isAndroid) {
+    document.getElementById('install-banner').style.display = 'flex';
+  }
+});
+
+// ============================================================
+// D-Day
+// ============================================================
+function updateDday() {
+  const examDate = new Date('2026-06-27T00:00:00');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+
+  let ddayText;
+  if (diff > 0) ddayText = `D-${diff}`;
+  else if (diff === 0) ddayText = 'D-Day';
+  else ddayText = `D+${Math.abs(diff)}`;
+
+  const badge = document.getElementById('dday-badge');
+  if (badge) badge.textContent = `필기시험 ${ddayText}`;
+
+  const headerDday = document.getElementById('header-dday');
+  if (headerDday) headerDday.textContent = ddayText;
+}
+
+// ============================================================
+// Init
+// ============================================================
+updateDday();
+initUserSelect();
+</script>
+</body>
+</html>
