@@ -273,13 +273,13 @@ select.filter-select { padding: 8px 12px; border: 1px solid var(--border); borde
           <div class="option-pills" id="chapter-pills">
             <div class="pill active" data-chapter="all">전체</div>
             <div class="pill" data-chapter="기출">기출문제</div>
-            <div class="pill" data-chapter="1장">1장</div>
-            <div class="pill" data-chapter="2장">2장</div>
-            <div class="pill" data-chapter="3장">3장</div>
-            <div class="pill" data-chapter="4장">4장</div>
-            <div class="pill" data-chapter="5장">5장</div>
-            <div class="pill" data-chapter="6장">6장</div>
-            <div class="pill" data-chapter="7장">7장</div>
+            <div class="pill" data-chapter="1장">1장 표면처리의 기초</div>
+            <div class="pill" data-chapter="2장">2장 전기화학</div>
+            <div class="pill" data-chapter="3장">3장 전기도금</div>
+            <div class="pill" data-chapter="4장">4장 특수도금</div>
+            <div class="pill" data-chapter="5장">5장 표면검사·도금액 관리</div>
+            <div class="pill" data-chapter="6장">6장 안전관리</div>
+            <div class="pill" data-chapter="7장">7장 금속재료</div>
           </div>
           <div id="chapter-desc" style="font-size:11px;color:var(--text-light);margin-top:6px"></div>
         </div>
@@ -535,8 +535,20 @@ function renderChapterCards() {
     }
   });
 
+  // 랜덤 풀이 카드 (맨 위)
+  const totalTextbook = QUESTIONS.filter(q => q.source === '교재').length;
+  el.innerHTML = `<div class="chapter-card" onclick="startChapterQuiz('랜덤')" style="border-color:var(--primary);background:var(--primary-light)">
+    <div class="chapter-card-top">
+      <span class="chapter-card-title">🎲 각 장의 랜덤 풀이</span>
+      <span class="chapter-card-count">${totalTextbook}문제</span>
+    </div>
+    <div class="chapter-card-bottom">
+      <span>1~7장 전체에서 랜덤 출제</span>
+    </div>
+  </div>`;
+
   const order = ['1장', '2장', '3장', '4장', '5장', '6장', '7장', '기출'];
-  el.innerHTML = order.map(ch => {
+  el.innerHTML += order.map(ch => {
     const info = CHAPTER_INFO[ch] || { name: ch, desc: '', icon: '📖' };
     const stat = chapters[ch] || { total: 0, solved: 0 };
     const hist = chapterHistory[ch] || { score: 0, total: 0 };
@@ -568,7 +580,12 @@ function renderChapterCards() {
 }
 
 function startChapterQuiz(chapter) {
-  const pool = QUESTIONS.filter(q => (q.chapter || '기출') === chapter);
+  let pool;
+  if (chapter === '랜덤') {
+    pool = QUESTIONS.filter(q => q.source === '교재');
+  } else {
+    pool = QUESTIONS.filter(q => (q.chapter || '기출') === chapter);
+  }
   if (pool.length === 0) { toast('해당 강의 문제가 없습니다'); return; }
 
   const unsolved = getUnsolvedQuestions(pool);
@@ -756,7 +773,8 @@ function renderQuestion() {
   document.getElementById('quiz-progress').textContent = `${quiz.current + 1} / ${quiz.questions.length}`;
 
   // Tags
-  const chapterTag = q.chapter && q.chapter !== '기출' ? `<span class="tag tag-type">${q.chapter}</span>` : '';
+  const chapterLabel = q.chapter_name ? `${q.chapter} ${q.chapter_name}` : q.chapter;
+  const chapterTag = q.chapter && q.chapter !== '기출' ? `<span class="tag tag-type">${chapterLabel}</span>` : '';
   const typeTag = q.exam_type !== '교재' ? `<span class="tag tag-type">${q.exam_type}</span>` : '';
   const yearTag = q.year !== '교재' ? `<span class="tag tag-year">${q.year}년</span>` : '';
   document.getElementById('quiz-tags').innerHTML = `${chapterTag}${typeTag}${yearTag}`;
